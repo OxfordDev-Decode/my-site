@@ -8,12 +8,14 @@
     input, button { padding: 5px; margin: 5px; }
     ul { list-style: none; padding-left: 0; }
     li { background: #eee; margin: 3px 0; padding: 5px; border-radius: 4px; }
+    a { color: blue; }
   </style>
 </head>
 <body>
   <h1>Public Group Name System</h1>
   
   <button onclick="createGroup()">Create New Group</button>
+  <button onclick="copyLink()">Copy Link</button>
   <p id="groupLink"></p>
 
   <div id="joinSection" style="display:none;">
@@ -55,6 +57,15 @@
       joinSection.style.display = "block";
       listEl.innerHTML = "";
       db.ref("rooms/" + group + "/users").set({}); // initialize group
+    }
+
+    // ====== Copy link button ======
+    function copyLink() {
+      if (!group) { alert("Create or open a group first!"); return; }
+      const link = window.location.origin + window.location.pathname + "?group=" + group;
+      navigator.clipboard.writeText(link)
+        .then(() => alert("Link copied!"))
+        .catch(() => alert("Failed to copy link"));
     }
 
     // ====== Add user name to group ======
