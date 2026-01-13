@@ -68,26 +68,38 @@
         .catch(() => alert("Failed to copy link"));
     }
 
-    // ====== Add user name to group ======
+    // ====== Add user name to group and show immediately ======
     function addName() {
       if (!group) { alert("Create or open a group first!"); return; }
-      const name = document.getElementById("name").value.trim();
+      const nameInput = document.getElementById("name");
+      const name = nameInput.value.trim();
       if (name === "") return;
+
+      // Push to Firebase
       db.ref("rooms/" + group + "/users").push(name);
-      document.getElementById("name").value = "";
+
+      // Show name immediately in the list
+      const li = document.createElement("li");
+      li.textContent = name;
+      listEl.appendChild(li);
+
+      nameInput.value = "";
     }
 
     // ====== Listen for all names in this group ======
     if (group) {
       joinSection.style.display = "block";
+
+      // Sync from Firebase (for other people's names)
       db.ref("rooms/" + group + "/users").on("value", snapshot => {
-        listEl.innerHTML = "";
+        listEl.innerHTML = ""; // clear list
         snapshot.forEach(child => {
           const li = document.createElement("li");
-          li.textContent = child.val(); // show every name, including yours
+          li.textContent = child.val();
           listEl.appendChild(li);
         });
       });
+
       const link = window.location.origin + window.location.pathname + "?group=" + group;
       groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
     }
