@@ -43,18 +43,14 @@
     const listEl = document.getElementById("list");
     const joinSection = document.getElementById("joinSection");
 
-    // ====== Get group ID from URL path /public-group/<group-id> ======
-    let path = window.location.pathname.split("/");
-    let groupIndex = path.indexOf("public-group");
-    let group = null;
-    if (groupIndex !== -1 && path.length > groupIndex + 1) {
-      group = path[groupIndex + 1];
-    }
+    // ====== Get group ID from URL query string ======
+    const params = new URLSearchParams(window.location.search);
+    let group = params.get("group") || null;
 
     // ====== Create a new group ======
     function createGroup() {
       group = Math.random().toString(36).substring(2, 8); // random group id
-      const link = window.location.origin + "/public-group/" + group;
+      const link = window.location.origin + window.location.pathname + "?group=" + group;
       groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
       joinSection.style.display = "block";
       listEl.innerHTML = "";
@@ -81,7 +77,7 @@
           listEl.appendChild(li);
         });
       });
-      const link = window.location.origin + "/public-group/" + group;
+      const link = window.location.origin + window.location.pathname + "?group=" + group;
       groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
     }
   </script>
