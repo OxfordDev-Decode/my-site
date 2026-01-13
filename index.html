@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dark Gray Neon Site</title>
 <style>
-  /* ---------- General Body ---------- */
   body {
     background-color: #1e1e1e; /* dark gray */
-    color: #dcdcdc; /* slightly smaller gray text */
+    color: #dcdcdc;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px; /* slightly smaller text */
     display: flex;
@@ -17,9 +16,9 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
+    position: relative;
   }
 
-  /* ---------- Container ---------- */
   .container {
     display: flex;
     flex-direction: column;
@@ -28,7 +27,6 @@
     max-width: 400px;
   }
 
-  /* ---------- Input Box ---------- */
   input[type="text"] {
     padding: 10px 15px;
     border: 2px solid transparent;
@@ -40,16 +38,14 @@
     outline: none;
   }
 
-  /* Gradient frame while focused */
   input[type="text"]:focus {
     border-image: linear-gradient(90deg, #ffffff, #aaaaaa, #ffffff) 1;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 
-  /* ---------- Button ---------- */
   button {
     padding: 10px 20px;
-    border: 2px solid #888; /* default frame like input */
+    border: 2px solid #888;
     border-radius: 12px;
     background-color: #2c2c2c;
     color: #dcdcdc;
@@ -58,13 +54,11 @@
     transition: box-shadow 0.2s ease, border-image 0.3s ease;
   }
 
-  /* Gradient frame while pressed */
   button:active {
     border-image: linear-gradient(90deg, #ffffff, #aaaaaa, #ffffff) 1;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 
-  /* ---------- Loading Dots ---------- */
   .loading {
     font-size: 14px;
     height: 20px;
@@ -72,13 +66,22 @@
     font-family: sans-serif;
   }
 
-  /* ---------- Footer ---------- */
   .footer {
     position: fixed;
     bottom: 10px;
     right: 10px;
     font-size: 12px;
     color: #aaa;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .version-label {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 12px;
+    color: #aaa;
+    font-family: 'Segoe UI', sans-serif;
   }
 </style>
 </head>
@@ -90,14 +93,15 @@
   <div class="loading" id="loading"></div>
 </div>
 
+<!-- Footer and Version -->
 <div class="footer">© OxfordDev</div>
+<div class="version-label">Version - P.V2.5 (+1 per update) beta</div>
 
 <script>
   const input = document.getElementById('nameInput');
   const button = document.getElementById('createGroupBtn');
   const loading = document.getElementById('loading');
 
-  // Loading dots animation
   button.addEventListener('click', () => {
     let dots = 0;
     loading.textContent = '.';
@@ -106,15 +110,14 @@
       loading.textContent = '.'.repeat(dots);
     }, 500);
 
-    // Simulate creating group
     setTimeout(() => {
       clearInterval(interval);
       loading.textContent = '';
       alert(`Group created by: ${input.value || 'Anonymous'}`);
       input.value = '';
-    }, 3000); // 3 seconds
+    }, 3000);
   });
 </script>
 
 </body>
-</html>
+  </html>
