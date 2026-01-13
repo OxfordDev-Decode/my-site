@@ -31,7 +31,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
   <script>
-    // ====== Your Firebase config ======
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -45,61 +44,59 @@
     const listEl = document.getElementById("list");
     const joinSection = document.getElementById("joinSection");
 
-    // ====== Get group ID from URL query string ======
     const params = new URLSearchParams(window.location.search);
     let group = params.get("group") || null;
 
-    // ====== Create a new group ======
+    let localNames = new Set(); // track names we've already added locally
+
     function createGroup() {
-      group = Math.random().toString(36).substring(2, 8); // random group id
+      group = Math.random().toString(36).substring(2, 8);
       const link = window.location.origin + window.location.pathname + "?group=" + group;
       groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
       joinSection.style.display = "block";
       listEl.innerHTML = "";
-      db.ref("rooms/" + group + "/users").set({}); // initialize group
+      localNames.clear();
+      db.ref("rooms/" + group + "/users").set({});
     }
 
-    // ====== Copy link button ======
     function copyLink() {
       if (!group) { alert("Create or open a group first!"); return; }
       const link = window.location.origin + window.location.pathname + "?group=" + group;
-      navigator.clipboard.writeText(link)
-        .then(() => alert("Link copied!"))
+      navigator.clipboard.writeText(link).then(() => alert("Link copied!"))
         .catch(() => alert("Failed to copy link"));
     }
 
-    // ====== Add user name to group and show immediately ======
     function addName() {
       if (!group) { alert("Create or open a group first!"); return; }
       const nameInput = document.getElementById("name");
       const name = nameInput.value.trim();
-      if (name === "") return;
+      if (!name || localNames.has(name)) return;
 
       // Push to Firebase
       db.ref("rooms/" + group + "/users").push(name);
 
-      // Show name immediately in the list
-      const li = document.createElement("li");
-      li.textContent = name;
-      listEl.appendChild(li);
-
+      // Show name immediately
+      addNameToList(name);
       nameInput.value = "";
     }
 
-    // ====== Listen for all names in this group ======
+    function addNameToList(name) {
+      if (localNames.has(name)) return;
+      const li = document.createElement("li");
+      li.textContent = name;
+      listEl.appendChild(li);
+      localNames.add(name);
+    }
+
+    // Listen for updates from Firebase
     if (group) {
       joinSection.style.display = "block";
-
-      // Sync from Firebase (for other people's names)
       db.ref("rooms/" + group + "/users").on("value", snapshot => {
-        listEl.innerHTML = ""; // clear list
         snapshot.forEach(child => {
-          const li = document.createElement("li");
-          li.textContent = child.val();
-          listEl.appendChild(li);
+          const name = child.val();
+          addNameToList(name);
         });
       });
-
       const link = window.location.origin + window.location.pathname + "?group=" + group;
       groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
     }
