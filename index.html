@@ -1,159 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Public Group Name System</title>
-  <style>
-    /* ===== Base Page ===== */
-    body {
-      background-color: #1f1f1f; /* plain dark gray */
-      color: #e6e6e6;            /* almost-white text */
-      font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 50px 20px 50px 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Gray Neon Input</title>
+<style>
+  /* General body */
+  body {
+    background-color: #1e1e1e; /* dark gray */
+    color: #e0e0e0; /* almost white */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* sans-serif font */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+  }
 
-    /* ===== Header Box ===== */
-    .header-box {
-      display: inline-block;
-      background-color: #2a2a2a;  /* slightly lighter gray box */
-      color: #e6e6e6;
-      padding: 15px 30px;
-      border-radius: 10px;
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 40px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.6);
-    }
+  /* Container for input and button */
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-    /* ===== Neon Input Frame ===== */
-    .neon-frame {
-      position: relative;
-      display: inline-block;
-      border-radius: 8px;
-      padding: 5px;
-      background: linear-gradient(270deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
-      background-size: 600% 600%;
-      animation: neonMove 4s linear infinite;
-      margin-bottom: 20px;
-    }
+  /* Input box */
+  input[type="text"] {
+    padding: 10px 15px;
+    border: 2px solid transparent; /* no frame by default */
+    border-radius: 10px;
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    font-size: 16px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+  }
 
-    @keyframes neonMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  /* Input typing frame */
+  input[type="text"].typing {
+    border-image: linear-gradient(90deg, #00ffff, #ff00ff, #00ffff) 1;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+  }
 
-    .neon-frame input {
-      padding: 8px 12px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: none;
-      outline: none;
-      width: 250px;
-      background-color: #2a2a2a; /* input background same as boxes */
-      color: #e6e6e6;
-    }
+  /* Button */
+  button {
+    padding: 10px 20px;
+    border: 2px solid #888; /* frame like input */
+    border-radius: 10px;
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
 
-    /* ===== Button ===== */
-    button {
-      padding: 8px 16px;
-      font-size: 16px;
-      margin-left: 10px;
-      border: none;
-      border-radius: 5px;
-      background-color: #2a2a2a;
-      color: #e6e6e6;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+  button:hover {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
 
-    button:hover {
-      background-color: #00ffff;
-      color: #1f1f1f;
-      box-shadow: 0 0 8px #00ffff;
-    }
+  /* Footer credit */
+  .footer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #aaa;
+  }
 
-    /* ===== Loading Dots ===== */
-    #loading {
-      margin-top: 10px;
-      font-family: monospace;
-      color: #e6e6e6;
-    }
-
-    /* ===== Generated Link ===== */
-    #link a {
-      color: #00ffff;
-      text-decoration: underline;
-    }
-
-    /* ===== Bottom-right Credit Box ===== */
-    .credit-box {
-      position: fixed;
-      bottom: 15px;
-      right: 15px;
-      background-color: #2a2a2a;
-      color: #e6e6e6;
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
-      pointer-events: none;
-    }
-  </style>
+  /* Loading dots */
+  .loading {
+    font-size: 18px;
+    margin-top: 10px;
+    height: 24px;
+    color: #e0e0e0;
+    font-family: sans-serif;
+  }
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <h1 class="header-box">Public Group Name System</h1>
+<div class="container">
+  <input type="text" id="nameInput" placeholder="Type your name...">
+  <button id="joinBtn">Join Group</button>
+  <div class="loading" id="loading"></div>
+</div>
 
-  <!-- Input & Button -->
-  <div class="neon-frame">
-    <input id="nameInput" type="text" placeholder="Enter your name">
-  </div>
-  <button id="createBtn">Create New Group</button>
+<div class="footer">© OxfordDev</div>
 
-  <!-- Loading Dots -->
-  <div id="loading"></div>
+<script>
+  const input = document.getElementById('nameInput');
+  const button = document.getElementById('joinBtn');
+  const loading = document.getElementById('loading');
 
-  <!-- Generated Link -->
-  <p id="link"></p>
+  let typingTimer;
 
-  <!-- Credit -->
-  <div class="credit-box">Created by Oxford</div>
+  // Add typing class while typing
+  input.addEventListener('input', () => {
+    input.classList.add('typing');
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+      input.classList.remove('typing'); // remove frame after stop typing
+    }, 1000); // 1 second after stop typing
+  });
 
-  <!-- JS -->
-  <script>
-    const btn = document.getElementById('createBtn');
-    const loading = document.getElementById('loading');
-    const linkEl = document.getElementById('link');
-
-    btn.addEventListener('click', () => {
-      let dots = 1;
-      loading.textContent = `Generating link: .`;
-      linkEl.textContent = '';
-
-      // Animate dots
-      const interval = setInterval(() => {
-        dots++;
-        if(dots > 3) dots = 1;
-        loading.textContent = `Generating link: ${'.'.repeat(dots)}`;
-      }, 400);
-
-      // Simulate generation delay
-      setTimeout(() => {
-        clearInterval(interval);
-        loading.textContent = ''; // remove loading
-        const group = Math.random().toString(36).substring(2, 8);
-        const link = window.location.origin + window.location.pathname + "?group=" + group;
-        linkEl.innerHTML = `Your link: <a href="${link}">${link}</a>`;
-      }, 2000); // 2 seconds delay
-    });
-  </script>
+  // Loading dots animation
+  button.addEventListener('click', () => {
+    let dots = 0;
+    loading.textContent = '.';
+    const interval = setInterval(() => {
+      dots = (dots + 1) % 4;
+      loading.textContent = '.'.repeat(dots);
+    }, 500);
+    // Simulate a process (e.g., generating link)
+    setTimeout(() => {
+      clearInterval(interval);
+      loading.textContent = '';
+      alert(`Joined group as: ${input.value || 'Anonymous'}`);
+      input.value = '';
+    }, 3000); // 3 seconds fake loading
+  });
+</script>
 
 </body>
 </html>
