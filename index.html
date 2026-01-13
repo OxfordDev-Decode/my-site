@@ -1,35 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Group Name System</title>
   <meta charset="utf-8">
-  <title>Mixed Site</title>
-
-  <!-- CSS -->
-  <style>
-    body {
-      background: #111;
-      color: #00ffcc;
-      font-family: monospace;
-      text-align: center;
-      padding-top: 40px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-  </style>
 </head>
 <body>
+  <h1>Group Name System</h1>
+  <button onclick="createGroup()">Create New Group</button>
+  <p id="groupLink"></p>
 
-  <h1 id="text">Hello</h1>
-  <button onclick="run()">Tap me</button>
+  <input id="name" placeholder="Enter your name">
+  <button onclick="addName()">Join Group</button>
 
-  <!-- JavaScript -->
+  <h2>Members:</h2>
+  <ul id="list"></ul>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
   <script>
-    function run() {
-      document.getElementById("text").textContent = "Mixed file works ✅";
+    // ====== Your Firebase config ======
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+      projectId: "YOUR_PROJECT",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // ====== Get group from URL ======
+    const params = new URLSearchParams(window.location.search);
+    let group = params.get("group") || null;
+
+    const groupLinkEl = document.getElementById("groupLink");
+    const listEl = document.getElementById("list");
+
+    // ====== Create a new group ======
+    function createGroup() {
+      group = Math.random().toString(36).substring(2, 8); // generates random group id
+      const link = window.location.origin + window.location.pathname + "?group=" + group;
+      groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
+      listEl.innerHTML = "";
+      // Initialize group in database
+      db.ref("rooms/" + group + "/users").set({});
+    }
+
+    // ====== Add name to group ======
+    function addName() {
+      if (!group) {
+        alert("Create or open a group first!");
+        return;
+      }
+      const name = document.getElementById("name").value.trim();
+      if (name === "") return;
+      db.ref("rooms/" + group + "/users").push(name);
+      document.getElementById("name").value = "";
+    }
+
+    // ====== Listen for changes ======
+    if (group) {
+      db.ref("rooms/" + group + "/users").on("value", snapshot => {
+        listEl.innerHTML = "";
+        snapshot.forEach(child => {
+          const li = document.createElement("li");
+          li.textContent = child.val();
+          listEl.appendChild(li);
+        });
+      });
+      groupLinkEl.innerHTML = `Share this link: <a href="?group=${group}">${window.location.href}</a>`;
     }
   </script>
-
 </body>
 </html>
