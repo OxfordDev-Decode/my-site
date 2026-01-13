@@ -1,113 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Public Group Name System</title>
-  <meta charset="utf-8">
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input, button { padding: 5px; margin: 5px; }
-    ul { list-style: none; padding-left: 0; }
-    li { background: #eee; margin: 3px 0; padding: 5px; border-radius: 4px; }
-    li.own { background: #a0e0a0; } /* highlight your name */
-    a { color: blue; }
+    /* ===== Base Page ===== */
+    body {
+      background-color: #1f1f1f; /* plain dark gray */
+      color: #e6e6e6;            /* almost-white text */
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 50px 20px 50px 20px;
+    }
+
+    /* ===== Header Box ===== */
+    .header-box {
+      display: inline-block;
+      background-color: #2a2a2a;  /* slightly lighter gray box */
+      color: #e6e6e6;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 40px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+
+    /* ===== Neon Input Frame ===== */
+    .neon-frame {
+      position: relative;
+      display: inline-block;
+      border-radius: 8px;
+      padding: 5px;
+      background: linear-gradient(270deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+      background-size: 600% 600%;
+      animation: neonMove 4s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes neonMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .neon-frame input {
+      padding: 8px 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      width: 250px;
+      background-color: #2a2a2a; /* input background same as boxes */
+      color: #e6e6e6;
+    }
+
+    /* ===== Button ===== */
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2a2a2a;
+      color: #e6e6e6;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00ffff;
+      color: #1f1f1f;
+      box-shadow: 0 0 8px #00ffff;
+    }
+
+    /* ===== Loading Dots ===== */
+    #loading {
+      margin-top: 10px;
+      font-family: monospace;
+      color: #e6e6e6;
+    }
+
+    /* ===== Generated Link ===== */
+    #link a {
+      color: #00ffff;
+      text-decoration: underline;
+    }
+
+    /* ===== Bottom-right Credit Box ===== */
+    .credit-box {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      background-color: #2a2a2a;
+      color: #e6e6e6;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Public Group Name System</h1>
-  
-  <button onclick="createGroup()">Create New Group</button>
-  <button onclick="copyLink()">Copy Link</button>
-  <p id="groupLink"></p>
 
-  <div id="joinSection" style="display:none;">
-    <input id="name" placeholder="Enter your name">
-    <button onclick="joinGroup()">Join Group</button>
-    
-    <h2>Members:</h2>
-    <ul id="list"></ul>
+  <!-- Header -->
+  <h1 class="header-box">Public Group Name System</h1>
+
+  <!-- Input & Button -->
+  <div class="neon-frame">
+    <input id="nameInput" type="text" placeholder="Enter your name">
   </div>
+  <button id="createBtn">Create New Group</button>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <!-- Loading Dots -->
+  <div id="loading"></div>
 
+  <!-- Generated Link -->
+  <p id="link"></p>
+
+  <!-- Credit -->
+  <div class="credit-box">Created by Oxford</div>
+
+  <!-- JS -->
   <script>
-    // ====== Firebase config (replace with your values) ======
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const btn = document.getElementById('createBtn');
+    const loading = document.getElementById('loading');
+    const linkEl = document.getElementById('link');
 
-    const groupLinkEl = document.getElementById("groupLink");
-    const listEl = document.getElementById("list");
-    const joinSection = document.getElementById("joinSection");
-    const nameInput = document.getElementById("name");
+    btn.addEventListener('click', () => {
+      let dots = 1;
+      loading.textContent = `Generating link: .`;
+      linkEl.textContent = '';
 
-    const params = new URLSearchParams(window.location.search);
-    let group = params.get("group") || null;
-    let localNames = new Set();
-    let myName = null;
+      // Animate dots
+      const interval = setInterval(() => {
+        dots++;
+        if(dots > 3) dots = 1;
+        loading.textContent = `Generating link: ${'.'.repeat(dots)}`;
+      }, 400);
 
-    // ====== Create a new group ======
-    function createGroup() {
-      group = Math.random().toString(36).substring(2, 8);
-      const link = window.location.origin + window.location.pathname + "?group=" + group;
-      groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
-      joinSection.style.display = "block";
-      listEl.innerHTML = "";
-      localNames.clear();
-      db.ref("rooms/" + group + "/users").set({});
-    }
-
-    // ====== Copy link button ======
-    function copyLink() {
-      if (!group) { alert("Create or open a group first!"); return; }
-      const link = window.location.origin + window.location.pathname + "?group=" + group;
-      navigator.clipboard.writeText(link).then(() => alert("Link copied!"))
-        .catch(() => alert("Failed to copy link"));
-    }
-
-    // ====== Join group and add your name ======
-    function joinGroup() {
-      if (!group) { alert("Create or open a group first!"); return; }
-      const name = nameInput.value.trim();
-      if (!name) return;
-      myName = name;
-
-      // Push to Firebase
-      db.ref("rooms/" + group + "/users").push(name);
-
-      // Show your name immediately with highlight
-      addNameToList(name, true);
-      nameInput.value = "";
-    }
-
-    // ====== Add a name to the list if not exists ======
-    function addNameToList(name, isOwn=false) {
-      if (localNames.has(name)) return;
-      const li = document.createElement("li");
-      li.textContent = name;
-      if (isOwn) li.classList.add("own");
-      listEl.appendChild(li);
-      localNames.add(name);
-    }
-
-    // ====== Listen for Firebase changes ======
-    if (group) {
-      joinSection.style.display = "block";
-      db.ref("rooms/" + group + "/users").on("value", snapshot => {
-        snapshot.forEach(child => {
-          addNameToList(child.val(), child.val() === myName);
-        });
-      });
-
-      const link = window.location.origin + window.location.pathname + "?group=" + group;
-      groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
-    }
+      // Simulate generation delay
+      setTimeout(() => {
+        clearInterval(interval);
+        loading.textContent = ''; // remove loading
+        const group = Math.random().toString(36).substring(2, 8);
+        const link = window.location.origin + window.location.pathname + "?group=" + group;
+        linkEl.innerHTML = `Your link: <a href="${link}">${link}</a>`;
+      }, 2000); // 2 seconds delay
+    });
   </script>
+
 </body>
 </html>
