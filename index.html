@@ -3,63 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dark Gray Neon Input</title>
+<title>Dark Gray Neon Site</title>
 <style>
-  /* General body */
+  /* ---------- General Body ---------- */
   body {
     background-color: #1e1e1e; /* dark gray */
-    color: #e0e0e0; /* almost white */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* sans-serif font */
+    color: #dcdcdc; /* slightly smaller gray text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px; /* slightly smaller text */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     height: 100vh;
     margin: 0;
-    flex-direction: column;
   }
 
-  /* Container for input and button */
+  /* ---------- Container ---------- */
   .container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
+    width: 90%;
+    max-width: 400px;
   }
 
-  /* Input box */
+  /* ---------- Input Box ---------- */
   input[type="text"] {
     padding: 10px 15px;
-    border: 2px solid transparent; /* no frame by default */
-    border-radius: 10px;
+    border: 2px solid transparent;
+    border-radius: 12px;
     background-color: #2c2c2c;
-    color: #e0e0e0;
-    font-size: 16px;
+    color: #dcdcdc;
+    font-size: 14px;
     transition: border 0.3s ease, box-shadow 0.3s ease;
     outline: none;
   }
 
-  /* Input typing frame */
-  input[type="text"].typing {
-    border-image: linear-gradient(90deg, #00ffff, #ff00ff, #00ffff) 1;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+  /* Gradient frame while focused */
+  input[type="text"]:focus {
+    border-image: linear-gradient(90deg, #ffffff, #aaaaaa, #ffffff) 1;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 
-  /* Button */
+  /* ---------- Button ---------- */
   button {
     padding: 10px 20px;
-    border: 2px solid #888; /* frame like input */
-    border-radius: 10px;
+    border: 2px solid #888; /* default frame like input */
+    border-radius: 12px;
     background-color: #2c2c2c;
-    color: #e0e0e0;
-    font-size: 16px;
+    color: #dcdcdc;
+    font-size: 14px;
     cursor: pointer;
-    transition: background 0.2s ease, box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease, border-image 0.3s ease;
   }
 
-  button:hover {
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  /* Gradient frame while pressed */
+  button:active {
+    border-image: linear-gradient(90deg, #ffffff, #aaaaaa, #ffffff) 1;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 
-  /* Footer credit */
+  /* ---------- Loading Dots ---------- */
+  .loading {
+    font-size: 14px;
+    height: 20px;
+    color: #dcdcdc;
+    font-family: sans-serif;
+  }
+
+  /* ---------- Footer ---------- */
   .footer {
     position: fixed;
     bottom: 10px;
@@ -67,22 +80,13 @@
     font-size: 12px;
     color: #aaa;
   }
-
-  /* Loading dots */
-  .loading {
-    font-size: 18px;
-    margin-top: 10px;
-    height: 24px;
-    color: #e0e0e0;
-    font-family: sans-serif;
-  }
 </style>
 </head>
 <body>
 
 <div class="container">
   <input type="text" id="nameInput" placeholder="Type your name...">
-  <button id="joinBtn">Join Group</button>
+  <button id="createGroupBtn">Create Group</button>
   <div class="loading" id="loading"></div>
 </div>
 
@@ -90,19 +94,8 @@
 
 <script>
   const input = document.getElementById('nameInput');
-  const button = document.getElementById('joinBtn');
+  const button = document.getElementById('createGroupBtn');
   const loading = document.getElementById('loading');
-
-  let typingTimer;
-
-  // Add typing class while typing
-  input.addEventListener('input', () => {
-    input.classList.add('typing');
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
-      input.classList.remove('typing'); // remove frame after stop typing
-    }, 1000); // 1 second after stop typing
-  });
 
   // Loading dots animation
   button.addEventListener('click', () => {
@@ -112,13 +105,14 @@
       dots = (dots + 1) % 4;
       loading.textContent = '.'.repeat(dots);
     }, 500);
-    // Simulate a process (e.g., generating link)
+
+    // Simulate creating group
     setTimeout(() => {
       clearInterval(interval);
       loading.textContent = '';
-      alert(`Joined group as: ${input.value || 'Anonymous'}`);
+      alert(`Group created by: ${input.value || 'Anonymous'}`);
       input.value = '';
-    }, 3000); // 3 seconds fake loading
+    }, 3000); // 3 seconds
   });
 </script>
 
