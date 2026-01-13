@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Group Name System</title>
+  <title>Public Group Name System</title>
   <meta charset="utf-8">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { padding: 5px; margin: 5px; }
+    ul { list-style: none; padding-left: 0; }
+    li { background: #eee; margin: 3px 0; padding: 5px; border-radius: 4px; }
+  </style>
 </head>
 <body>
-  <h1>Group Name System</h1>
+  <h1>Public Group Name System</h1>
+  
   <button onclick="createGroup()">Create New Group</button>
   <p id="groupLink"></p>
 
-  <input id="name" placeholder="Enter your name">
-  <button onclick="addName()">Join Group</button>
-
-  <h2>Members:</h2>
-  <ul id="list"></ul>
+  <div id="joinSection" style="display:none;">
+    <input id="name" placeholder="Enter your name">
+    <button onclick="addName()">Join Group</button>
+    
+    <h2>Members:</h2>
+    <ul id="list"></ul>
+  </div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -30,46 +39,50 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ====== Get group from URL ======
-    const params = new URLSearchParams(window.location.search);
-    let group = params.get("group") || null;
-
     const groupLinkEl = document.getElementById("groupLink");
     const listEl = document.getElementById("list");
+    const joinSection = document.getElementById("joinSection");
+
+    // ====== Get group ID from URL path /public-group/<group-id> ======
+    let path = window.location.pathname.split("/");
+    let groupIndex = path.indexOf("public-group");
+    let group = null;
+    if (groupIndex !== -1 && path.length > groupIndex + 1) {
+      group = path[groupIndex + 1];
+    }
 
     // ====== Create a new group ======
     function createGroup() {
-      group = Math.random().toString(36).substring(2, 8); // generates random group id
-      const link = window.location.origin + window.location.pathname + "?group=" + group;
+      group = Math.random().toString(36).substring(2, 8); // random group id
+      const link = window.location.origin + "/public-group/" + group;
       groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
+      joinSection.style.display = "block";
       listEl.innerHTML = "";
-      // Initialize group in database
-      db.ref("rooms/" + group + "/users").set({});
+      db.ref("rooms/" + group + "/users").set({}); // initialize group
     }
 
-    // ====== Add name to group ======
+    // ====== Add user name to group ======
     function addName() {
-      if (!group) {
-        alert("Create or open a group first!");
-        return;
-      }
+      if (!group) { alert("Create or open a group first!"); return; }
       const name = document.getElementById("name").value.trim();
       if (name === "") return;
       db.ref("rooms/" + group + "/users").push(name);
       document.getElementById("name").value = "";
     }
 
-    // ====== Listen for changes ======
+    // ====== Listen for all names in this group ======
     if (group) {
+      joinSection.style.display = "block";
       db.ref("rooms/" + group + "/users").on("value", snapshot => {
         listEl.innerHTML = "";
         snapshot.forEach(child => {
           const li = document.createElement("li");
-          li.textContent = child.val();
+          li.textContent = child.val(); // show every name, including yours
           listEl.appendChild(li);
         });
       });
-      groupLinkEl.innerHTML = `Share this link: <a href="?group=${group}">${window.location.href}</a>`;
+      const link = window.location.origin + "/public-group/" + group;
+      groupLinkEl.innerHTML = `Share this link: <a href="${link}">${link}</a>`;
     }
   </script>
 </body>
