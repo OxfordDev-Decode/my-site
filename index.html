@@ -2,219 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Folders</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Public Group • v1.7</title>
 
 <style>
-:root{
-  --bg:#121212;
-  --box:#1c1c1c;
-  --text:#e6e6e6;
-  --border:#2a2a2a;
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0f0f0f;
+  color: #fff;
 }
 
-.light{
-  --bg:#f5f5f5;
-  --box:#ffffff;
-  --text:#111;
-  --border:#ddd;
+header {
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-*{box-sizing:border-box;font-family:system-ui}
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  transition:background .4s,color .4s;
+.container {
+  padding: 16px;
 }
 
-/* ===== TOP BAR ===== */
-.top{
-  height:3px;
-  background:linear-gradient(90deg,#aaa,#fff,#aaa);
-  background-size:200%;
-  animation:grad 10s linear infinite;
-  opacity:.4;
-}
-@keyframes grad{to{background-position:200%}}
-
-.menu-btn{
-  position:fixed;
-  top:12px;
-  left:12px;
-  font-size:20px;
-  cursor:pointer;
-  z-index:3;
+.folder {
+  background: #161616;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* ===== MENU ===== */
-.menu{
-  position:fixed;
-  top:0;left:0;
-  width:70%;
-  max-width:280px;
-  height:100%;
-  background:var(--box);
-  border-right:1px solid var(--border);
-  transform:translateX(-100%);
-  transition:.35s ease;
-  padding:20px;
-  z-index:4;
+.folder svg {
+  fill: white;
 }
 
-.menu.open{transform:translateX(0)}
-
-.overlay{
-  position:fixed;
-  inset:0;
-  background:#0007;
-  display:none;
-  z-index:3;
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #1e1e1e;
+  color: white;
+  margin-top: 20px;
 }
 
-.overlay.show{display:block}
-
-.menu h3{margin-top:0}
-
-.menu button{
-  width:100%;
-  margin-top:12px;
-  padding:10px;
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--text);
-  border-radius:10px;
-}
-
-/* ===== MAIN ===== */
-.container{
-  max-width:420px;
-  margin:80px auto;
-  background:var(--box);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:20px;
-}
-
-.box{
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:12px;
-  margin-bottom:12px;
-}
-
-input{
-  width:100%;
-  background:none;
-  border:none;
-  outline:none;
-  color:var(--text);
-}
-
-button.main{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  background:none;
-  border:1px solid var(--border);
-  color:var(--text);
-}
-
-.footer{
-  position:fixed;
-  bottom:10px;
-  left:10px;
-  font-size:11px;
-  opacity:.6;
+.version {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 11px;
+  opacity: .5;
 }
 </style>
 </head>
 
 <body>
-<div class="top"></div>
-<div class="menu-btn" onclick="openMenu()">☰</div>
 
-<div class="menu" id="menu">
-  <h3>Menu</h3>
-  <div id="menuUser"></div>
-  <button onclick="toggleTheme()">Toggle theme</button>
-  <button onclick="logout()">Logout</button>
-</div>
-<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+<header>Folders</header>
+
+<div class="container" id="folders"></div>
 
 <div class="container">
-  <h3>Create / Join Group</h3>
-
-  <div class="box">
-    <input id="username" placeholder="Your name">
-  </div>
-
-  <div class="box">
-    <input id="groupName" placeholder="Group name">
-  </div>
-
-  <button class="main" onclick="createGroup()">Create group</button>
-
-  <br><br>
-
-  <div class="box">
-    <input id="joinCode" placeholder="6-digit code">
-  </div>
-
-  <button class="main" onclick="joinGroup()">Join group</button>
+  <button onclick="createFolder()">Create Folder</button>
 </div>
 
-<div class="footer">Version – P.V1.7 (Developing)</div>
+<div class="version">Version - P.V1.8</div>
 
 <script>
-const menu = document.getElementById("menu");
-const overlay = document.getElementById("overlay");
+const foldersEl = document.getElementById("folders");
+let folders = JSON.parse(localStorage.getItem("folders") || "[]");
 
-function openMenu(){menu.classList.add("open");overlay.classList.add("show")}
-function closeMenu(){menu.classList.remove("open");overlay.classList.remove("show")}
-
-function toggleTheme(){
-  document.body.classList.toggle("light");
-  localStorage.setItem("theme",document.body.classList.contains("light")?"light":"dark");
+function render() {
+  foldersEl.innerHTML = "";
+  folders.forEach((f, i) => {
+    const div = document.createElement("div");
+    div.className = "folder";
+    div.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path d="M10 4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h6z"/>
+      </svg>
+      ${f.name}
+    `;
+    div.onclick = () => location.href = `folder.html?id=${i}`;
+    foldersEl.appendChild(div);
+  });
 }
 
-if(localStorage.getItem("theme")==="light"){
-  document.body.classList.add("light");
+function createFolder() {
+  const name = prompt("Folder name");
+  if (!name) return;
+  folders.push({ name, note: "" });
+  localStorage.setItem("folders", JSON.stringify(folders));
+  render();
 }
 
-function logout(){
-  localStorage.removeItem("pg_username");
-  location.reload();
-}
-
-const usernameInput = document.getElementById("username");
-usernameInput.value = localStorage.getItem("pg_username") || "";
-menuUser.textContent = "User: " + (usernameInput.value || "Guest");
-
-function genCode(){return Math.floor(100000+Math.random()*900000)}
-
-function createGroup(){
-  const u=usernameInput.value.trim();
-  const g=groupName.value.trim();
-  if(!u||!g)return alert("Fill all fields");
-  localStorage.setItem("pg_username",u);
-  const code=genCode();
-  localStorage.setItem("group_"+code,JSON.stringify({name:g,host:u,members:[u]}));
-  location.href="group.html?code="+code;
-}
-
-function joinGroup(){
-  const u=usernameInput.value.trim();
-  const c=joinCode.value.trim();
-  const data=localStorage.getItem("group_"+c);
-  if(!data)return alert("Group not found");
-  localStorage.setItem("pg_username",u);
-  const g=JSON.parse(data);
-  if(!g.members.includes(u))g.members.push(u);
-  localStorage.setItem("group_"+c,JSON.stringify(g));
-  location.href="group.html?code="+c;
-}
+render();
 </script>
+
 </body>
 </html>
