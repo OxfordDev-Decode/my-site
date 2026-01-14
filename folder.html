@@ -2,157 +2,139 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Folder</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note</title>
 
 <style>
 :root{
-  --bg:#121212;
-  --panel:#1e1e1e;
-  --border:#444;
-  --text:#e6e6e6;
-  --line:#888;
+  --bg:#0f1115;
+  --panel:#161922;
+  --panel2:#1c2030;
+  --text:#eaeaf0;
+  --line:#2a2f44;
 }
-
 body{
   margin:0;
-  font-family: system-ui, sans-serif;
+  font-family:system-ui,Segoe UI,Roboto,sans-serif;
   background:var(--bg);
   color:var(--text);
 }
-
-header{
-  padding:14px;
-  border-bottom:1px solid var(--border);
-}
-
-#note{
-  padding:16px;
-  min-height:60vh;
-}
-
-.line{
-  border-left:2px solid var(--line);
-  padding-left:10px;
-  margin:8px 0;
-}
-
-/* markdown popup */
-.md-popup{
+.top{
   position:fixed;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:8px;
-  width:200px;
-  z-index:10;
-}
-
-.md-popup textarea{
+  top:0; left:0;
   width:100%;
-  height:70px;
-  background:#111;
+  height:48px;
+  background:var(--panel);
+  display:flex;
+  align-items:center;
+  padding:0 10px;
+}
+.top button{
+  border:none;
+  background:var(--panel2);
+  color:white;
+  border-radius:8px;
+  padding:6px 10px;
+}
+.viewer{
+  padding:70px 16px 16px;
+}
+.note{
+  background:var(--panel2);
+  padding:16px;
+  border-radius:12px;
+}
+.popup{
+  position:fixed;
+  top:120px;
+  left:20px;
+  width:320px;
+  background:var(--panel);
+  border-radius:12px;
+  padding:10px;
+  display:none;
+}
+.popup header{
+  font-size:12.5px;
+  margin-bottom:6px;
+  cursor:move;
+}
+.popup textarea{
+  width:100%;
+  height:160px;
+  background:var(--panel2);
   color:var(--text);
   border:none;
-  resize:none;
+  border-radius:8px;
+  padding:8px;
 }
-
-.md-line{
-  position:fixed;
-  height:1px;
-  background:var(--line);
-  z-index:9;
-}
-
-/* table */
-.md-table{ border-left:2px solid var(--line); margin:8px 0; }
-.md-row{ display:flex; }
-.md-cell{
-  min-width:100px;
-  padding:6px;
-  border-right:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-}
-.md-cell:focus{ outline:none; background:rgba(255,255,255,.06); }
 </style>
 </head>
 
 <body>
-
-<header>
+<div class="top">
   <button onclick="history.back()">← Back</button>
-</header>
+  <button style="margin-left:auto" onclick="closePop()">✕</button>
+</div>
 
-<div id="note" contenteditable="true" spellcheck="false"></div>
+<div class="viewer">
+  <div class="note" id="render"></div>
+</div>
+
+<div class="popup" id="popup">
+  <header id="drag">Edit Markdown</header>
+  <textarea id="editor"></textarea>
+  <button onclick="saveEdit()">Save</button>
+</div>
 
 <script>
-const note=document.getElementById("note");
-const id=new URLSearchParams(location.search).get("id");
-const key="note_"+id;
-note.innerHTML=localStorage.getItem(key)||"";
+const idx=location.hash.slice(1);
+let folders=JSON.parse(localStorage.getItem("folders"));
+let content=folders[idx].content;
 
-note.addEventListener("input",()=>{
-  localStorage.setItem(key,note.innerHTML);
-  enhance();
-});
+const renderEl=document.getElementById("render");
+const pop=document.getElementById("popup");
+const editor=document.getElementById("editor");
 
-function enhance(){
-  // |=| table
-  note.querySelectorAll("div").forEach(d=>{
-    if(d.textContent.trim()==="|=|"){
-      d.replaceWith(createTable());
-    }
-  });
+function md(t){
+  return t
+    .replace(/^# (.*$)/gim,"<h1>$1</h1>")
+    .replace(/^## (.*$)/gim,"<h2>$1</h2>")
+    .replace(/\*\*(.*?)\*\*/g,"<b>$1</b>")
+    .replace(/\n/g,"<br>");
+}
+function render(){
+  renderEl.innerHTML=md(content);
+}
+render();
 
-  // markdown popup
-  note.querySelectorAll("span[data-md]").forEach(s=>{
-    s.onclick=()=>openPopup(s);
-  });
+renderEl.onclick=()=>{
+  editor.value=content;
+  pop.style.display="block";
+};
+function saveEdit(){
+  content=editor.value;
+  folders[idx].content=content;
+  localStorage.setItem("folders",JSON.stringify(folders));
+  pop.style.display="none";
+  render();
+}
+function closePop(){
+  pop.style.display="none";
 }
 
-function createTable(){
-  const t=document.createElement("div");
-  t.className="md-table";
-  for(let r=0;r<2;r++){
-    const row=document.createElement("div");
-    row.className="md-row";
-    for(let c=0;c<2;c++){
-      const cell=document.createElement("div");
-      cell.className="md-cell";
-      cell.contentEditable=true;
-      row.appendChild(cell);
-    }
-    t.appendChild(row);
+/* draggable popup */
+let dx,dy,drag=false;
+drag.onmousedown=e=>{
+  drag=true;dx=e.offsetX;dy=e.offsetY;
+};
+document.onmousemove=e=>{
+  if(drag){
+    pop.style.left=e.pageX-dx+"px";
+    pop.style.top=e.pageY-dy+"px";
   }
-  return t;
-}
-
-let popup,line;
-
-function openPopup(target){
-  closePopup();
-  popup=document.createElement("div");
-  popup.className="md-popup";
-  popup.innerHTML=`<textarea>${target.dataset.md}</textarea>`;
-  line=document.createElement("div");
-  line.className="md-line";
-  document.body.append(popup,line);
-
-  const r=target.getBoundingClientRect();
-  popup.style.left=r.right+10+"px";
-  popup.style.top=r.top+"px";
-  line.style.left=r.right+"px";
-  line.style.top=r.top+r.height/2+"px";
-  line.style.width="10px";
-}
-
-function closePopup(){
-  if(popup) popup.remove();
-  if(line) line.remove();
-}
-
-enhance();
+};
+document.onmouseup=()=>drag=false;
 </script>
-
 </body>
 </html>
