@@ -2,203 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Notes – P.V1.8</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Notes – Home</title>
 
 <style>
 :root{
-  --bg:#121212;
-  --panel:#1c1c1c;
-  --text:#eaeaea;
-  --line:#555;
-  --accent:#2a2a2a;
+  --bg:#0f1115;
+  --panel:#161922;
+  --panel2:#1c2030;
+  --text:#eaeaf0;
+  --muted:#8b90a7;
 }
-
-.light{
-  --bg:#f5f5f5;
-  --panel:#ffffff;
-  --text:#111;
-  --line:#bbb;
-  --accent:#eaeaea;
-}
-
-*{box-sizing:border-box;font-family:Inter,sans-serif;}
 body{
   margin:0;
+  font-family:system-ui,Segoe UI,Roboto,sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:background .4s,color .4s;
 }
-
-/* TOP BAR */
-.topbar{
-  height:52px;
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  border-bottom:1px solid var(--line);
-}
-.menu-btn{
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* MENU */
 .menu{
   position:fixed;
-  top:0;
-  left:-70%;
-  width:70%;
+  left:0; top:0;
+  width:220px;
   height:100%;
   background:var(--panel);
-  transition:.35s;
-  padding:16px;
-  z-index:10;
+  padding:12px;
 }
-.menu.show{left:0;}
-
-.menu h3{margin-top:0;font-weight:600;}
-.menu input{
-  width:100%;
-  padding:10px;
-  background:#2a2a2a;
-  border:none;
-  border-radius:6px;
-  color:white;
+.menu h3{
+  margin:0 0 10px;
+  font-size:13px;
+  color:var(--muted);
 }
-.light .menu input{background:#ddd;color:black;}
-
 .menu button{
-  margin-top:12px;
   width:100%;
-  padding:10px;
-  background:var(--accent);
+  margin-bottom:8px;
+  padding:8px;
+  font-size:12.5px;
   border:none;
+  border-radius:8px;
+  background:var(--panel2);
   color:var(--text);
-  border-radius:6px;
-  cursor:pointer;
 }
-
-/* FOLDER LIST */
-.container{
-  padding:18px;
+.main{
+  margin-left:220px;
+  padding:20px;
 }
-
-.quote-list{
-  display:flex;
-}
-
-.quote-line{
-  width:4px;
-  background:var(--line);
-  border-radius:4px;
-  margin-right:10px;
-}
-
-.folder-stack{
-  width:100%;
-}
-
 .folder{
+  background:var(--panel2);
   padding:14px;
-  background:var(--panel);
-  border-bottom:1px solid var(--line);
+  border-radius:10px;
+  margin-bottom:10px;
   cursor:pointer;
-  transition:.25s;
-}
-.folder:first-child{
-  border-top-right-radius:14px;
-}
-.folder:last-child{
-  border-bottom-right-radius:14px;
-  border-bottom:none;
 }
 .folder:hover{
-  background:var(--accent);
-}
-
-/* ADD BUTTON */
-.add-btn{
-  margin-top:20px;
-  padding:12px;
-  background:var(--accent);
-  border:none;
-  border-radius:10px;
-  color:var(--text);
-  width:100%;
-  cursor:pointer;
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-.modal.show{display:flex;}
-.modal-box{
-  background:var(--panel);
-  padding:18px;
-  border-radius:12px;
-  width:80%;
-}
-.modal-box input{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
-  background:#2a2a2a;
-  color:white;
-}
-.light .modal-box input{background:#ddd;color:black;}
-.modal-box button{
-  margin-top:12px;
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  background:var(--accent);
-  color:var(--text);
+  background:#ffffff10;
 }
 </style>
 </head>
 
 <body>
-<div class="topbar">
-  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+<div class="menu">
+  <h3>MENU</h3>
+  <button onclick="createFolder()">＋ Create Folder</button>
 </div>
 
-<div class="menu" id="menu">
-  <h3>User</h3>
-  <input id="username" placeholder="Enter name">
-  <button onclick="saveUser()">Save</button>
-  <h3>Theme</h3>
-  <button onclick="toggleTheme()">Dark / Light</button>
-</div>
-
-<div class="container">
-  <div class="quote-list">
-    <div class="quote-line"></div>
-    <div class="folder-stack" id="folders"></div>
-  </div>
-
-  <button class="add-btn" onclick="openModal()">Create Folder</button>
-</div>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <h3>Create Folder</h3>
-    <input id="folderName" placeholder="Folder name">
-    <button onclick="createFolder()">Create</button>
-    <button onclick="closeModal()">Cancel</button>
-  </div>
-</div>
+<div class="main" id="folders"></div>
 
 <script>
 const foldersEl=document.getElementById("folders");
@@ -210,36 +77,18 @@ function render(){
     const d=document.createElement("div");
     d.className="folder";
     d.textContent=f.name;
-    d.onclick=()=>location.href=`folder.html?id=${i}`;
+    d.onclick=()=>location.href="folder.html#"+i;
     foldersEl.appendChild(d);
   });
 }
-render();
-
 function createFolder(){
-  const name=document.getElementById("folderName").value.trim();
+  const name=prompt("Folder name");
   if(!name)return;
-  folders.push({name,content:""});
+  folders.push({name,content:"# "+name+"\n"});
   localStorage.setItem("folders",JSON.stringify(folders));
-  closeModal();render();
+  render();
 }
-
-function openModal(){document.getElementById("modal").classList.add("show");}
-function closeModal(){document.getElementById("modal").classList.remove("show");}
-
-function toggleMenu(){document.getElementById("menu").classList.toggle("show");}
-
-function saveUser(){
-  localStorage.setItem("user",username.value);
-}
-
-function toggleTheme(){
-  document.body.classList.toggle("light");
-  localStorage.setItem("theme",document.body.className);
-}
-
-document.body.className=localStorage.getItem("theme")||"";
-username.value=localStorage.getItem("user")||"";
+render();
 </script>
 </body>
 </html>
