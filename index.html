@@ -2,223 +2,241 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Index</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Group Site</title>
 
 <style>
-/* ===== THEME VARIABLES ===== */
-:root{
-  --bg:#1b1b1b;
-  --box:#222;
-  --text:#e5e5e5;
-  --border:#444;
+:root {
+  --bg: #141414;
+  --box: #1e1e1e;
+  --text: #e5e5e5;
+  --border: #2b2b2b;
 }
 
-body.light{
-  --bg:#f4f4f4;
-  --box:#ffffff;
-  --text:#111;
-  --border:#ccc;
+body.light {
+  --bg: #f4f4f4;
+  --box: #ffffff;
+  --text: #222;
+  --border: #ccc;
 }
 
-/* ===== BASE ===== */
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:sans-serif;
-  transition:0.3s;
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
 }
 
-/* ===== MENU BUTTON ===== */
-.menu-btn{
-  position:fixed;
-  top:14px;
-  left:14px;
-  font-size:22px;
-  cursor:pointer;
-  z-index:1001;
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* ===== SLIDE MENU ===== */
-.menu{
-  position:fixed;
-  top:0;
-  left:-35%;
-  width:35%;
-  height:100%;
-  background:var(--box);
-  padding:20px;
-  border-right:1px solid var(--border);
-  transition:0.35s ease;
-  z-index:1000;
+/* Top gradient line */
+.top-line {
+  height: 3px;
+  background: linear-gradient(90deg,
+    #aaa, #fff, #888, #ccc, #aaa);
+  background-size: 400% 400%;
+  animation: move 12s linear infinite;
 }
 
-.menu.open{
-  left:0;
+@keyframes move {
+  0% {background-position: 0%;}
+  100% {background-position: 400%;}
 }
 
-.menu h3{
-  margin-top:0;
+/* Menu button */
+.menu-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: var(--text);
 }
 
-/* ===== INPUT + BUTTON ===== */
-input, button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--text);
-  border-radius:6px;
+/* Side menu */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 33%;
+  max-width: 260px;
+  height: 100%;
+  background: var(--box);
+  border-right: 1px solid var(--border);
+  transform: translateX(-100%);
+  transition: transform 0.35s ease;
+  z-index: 1000;
+  padding: 60px 15px;
+  pointer-events: none;
 }
 
-button{
-  cursor:pointer;
+.menu.open {
+  transform: translateX(0);
+  pointer-events: auto;
 }
 
-/* ===== GRADIENT EFFECT ===== */
-@keyframes slowRainbow {
-  0%{background-position:0%}
-  100%{background-position:600%}
+.menu h3 {
+  margin-top: 0;
 }
 
-.input-wrap{
-  padding:2px;
-  border-radius:7px;
-  background:transparent;
+.menu input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
 }
 
-.input-wrap.active{
-  background:linear-gradient(
-    90deg,
-    red,orange,yellow,green,cyan,blue,purple,red
-  );
-  background-size:600% 100%;
-  animation:slowRainbow 25s linear infinite;
+.menu button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
 }
 
-.input-wrap input{
-  background:var(--box);
-  border:none;
-  outline:none;
-  border-radius:5px;
+/* Main content */
+.main {
+  padding: 60px 15px;
 }
 
-/* ===== MAIN ===== */
-.main{
-  padding:60px 20px;
+.box {
+  background: var(--box);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  max-width: 400px;
+  margin: auto;
 }
 
-.box{
-  background:var(--box);
-  padding:15px;
-  border-radius:8px;
-  max-width:320px;
+/* Typing glow */
+.input-wrap {
+  position: relative;
+  border-radius: 10px;
 }
 
-/* ===== VERSION ===== */
-.version{
-  position:fixed;
-  bottom:10px;
-  left:10px;
-  opacity:0.6;
-  font-size:12px;
+.input-wrap.active::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  background: linear-gradient(90deg,#aaa,#fff,#aaa);
+  background-size: 300% 300%;
+  animation: move 10s linear infinite;
+  z-index: -1;
+}
+
+input.main-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+button.main-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 8px;
+  right: 10px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.version {
+  position: fixed;
+  bottom: 8px;
+  left: 10px;
+  font-size: 12px;
+  opacity: 0.7;
 }
 </style>
 </head>
 
 <body>
 
-<!-- MENU BUTTON -->
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
+<div class="top-line"></div>
 
-<!-- SLIDE MENU -->
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+
 <div class="menu" id="menu">
   <h3>Menu</h3>
 
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <div class="input-wrap" id="inputWrap">
-      <input id="usernameInput" placeholder="Enter your name">
-    </div>
+  <div id="loginArea">
+    <input id="username" placeholder="Enter username">
     <button onclick="login()">Log in</button>
   </div>
 
-  <!-- SETTINGS -->
-  <h4>Settings</h4>
-  <button onclick="setTheme('dark')">Dark theme</button>
-  <button onclick="setTheme('light')">Light theme</button>
-
-  <!-- LOGOUT -->
+  <button onclick="toggleTheme()">Theme: Dark / Light</button>
   <button onclick="logout()">Log out</button>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main">
   <div class="box">
-    <h3>Home</h3>
-    <div id="userText">Not logged in</div>
+    <h3 id="welcome">Welcome</h3>
+
+    <div class="input-wrap" id="wrap">
+      <input class="main-input" placeholder="Enter your name"
+        onfocus="typing(true)" onblur="typing(false)">
+    </div>
+
+    <button class="main-btn">Create / Join Group</button>
   </div>
 </div>
 
-<!-- VERSION -->
-<div class="version">Version – P.V1.7 beta</div>
+<div class="footer">Credit: Oxford</div>
+<div class="version">Version - P.V1.7 beta</div>
 
 <script>
 const menu = document.getElementById("menu");
-const userText = document.getElementById("userText");
-const loginBox = document.getElementById("loginBox");
-const input = document.getElementById("usernameInput");
-const wrap = document.getElementById("inputWrap");
+const welcome = document.getElementById("welcome");
 
-/* MENU */
-function toggleMenu(){
+function toggleMenu() {
   menu.classList.toggle("open");
 }
 
-/* LOGIN */
-function login(){
-  const name = input.value.trim();
-  if(!name) return alert("Enter your name");
-  localStorage.setItem("username", name);
-  updateUser();
+function typing(on) {
+  document.getElementById("wrap")
+    .classList.toggle("active", on);
 }
 
-/* LOGOUT */
-function logout(){
-  localStorage.removeItem("username");
-  updateUser();
+function login() {
+  const name = document.getElementById("username").value.trim();
+  if (!name) return;
+  localStorage.setItem("user", name);
+  welcome.textContent = "Welcome, " + name;
 }
 
-/* USER STATE */
-function updateUser(){
-  const user = localStorage.getItem("username");
-  if(user){
-    userText.innerText = "Logged in as: " + user;
-    loginBox.style.display = "none";
-  }else{
-    userText.innerText = "Not logged in";
-    loginBox.style.display = "block";
-  }
+function logout() {
+  localStorage.removeItem("user");
+  welcome.textContent = "Welcome";
 }
 
-/* THEME */
-function setTheme(t){
-  document.body.classList.toggle("light", t==="light");
-  localStorage.setItem("theme", t);
+function toggleTheme() {
+  document.body.classList.toggle("light");
 }
 
-/* INPUT GRADIENT ONLY WHEN TYPING */
-input.addEventListener("focus", ()=>wrap.classList.add("active"));
-input.addEventListener("blur", ()=>wrap.classList.remove("active"));
-
-/* LOAD SAVED STATE */
-(function(){
-  if(localStorage.getItem("theme")==="light"){
-    document.body.classList.add("light");
-  }
-  updateUser();
-})();
+/* Load saved user */
+const saved = localStorage.getItem("user");
+if (saved) welcome.textContent = "Welcome, " + saved;
 </script>
 
 </body>
