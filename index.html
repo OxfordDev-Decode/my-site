@@ -1,233 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Public Group</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Public Group • v1.7</title>
 
 <style>
 :root{
-  --bg:#141414;
-  --box:#1e1e1e;
-  --text:#e6e6e6;
-  --border:#2b2b2b;
+  --bg:#121212;
+  --box:#1c1c1c;
+  --text:#e5e5e5;
+  --muted:#bdbdbd;
+  --border:#2a2a2a;
+  --radius:10px;
 }
 
-body.light{
-  --bg:#f4f4f4;
-  --box:#ffffff;
-  --text:#222;
-  --border:#ccc;
-}
-
-*{
-  box-sizing:border-box;
-  font-family:system-ui,sans-serif;
-  transition:background .4s,color .4s,border .4s;
-}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto;}
 
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:background .4s,color .4s;
 }
 
-/* top gray moving line */
+/* top gradient line */
 .top-line{
+  position:fixed;
+  top:0;left:0;
   height:3px;
-  background:linear-gradient(90deg,#777,#aaa,#777);
-  background-size:300% 300%;
-  animation:move 18s linear infinite;
+  width:100%;
+  background:linear-gradient(90deg,#aaa,#fff,#aaa);
+  background-size:200% 100%;
+  animation:move 8s linear infinite;
+  opacity:.4;
 }
 
 @keyframes move{
-  0%{background-position:0%}
-  100%{background-position:300%}
+  from{background-position:0%}
+  to{background-position:200%}
 }
 
-/* menu */
-.menu-btn{
-  position:fixed;
-  top:10px;
-  left:10px;
-  background:none;
-  border:none;
-  font-size:22px;
-  color:var(--text);
-  z-index:1001;
-}
-
-.menu{
-  position:fixed;
-  top:0;
-  left:0;
-  width:33%;
-  max-width:260px;
-  height:100%;
+.container{
+  width:92%;
+  max-width:420px;
   background:var(--box);
-  transform:translateX(-100%);
-  transition:transform .4s ease;
-  padding:60px 15px;
-  border-right:1px solid var(--border);
-  pointer-events:none;
-  z-index:1000;
-}
-.menu.open{
-  transform:translateX(0);
-  pointer-events:auto;
-}
-
-.menu input, .menu button{
-  width:100%;
-  margin-top:10px;
-  padding:10px;
-  border-radius:10px;
+  border-radius:14px;
+  padding:22px;
   border:1px solid var(--border);
-  background:var(--bg);
-  color:var(--text);
 }
 
-/* main */
-.main{
-  padding:70px 15px;
+h1{
+  margin:0 0 14px;
+  font-size:18px;
+  font-weight:600;
 }
 
 .box{
-  max-width:400px;
-  margin:auto;
-  background:var(--box);
+  background:#181818;
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:15px;
-}
-
-/* typing frame */
-.input-wrap{
-  position:relative;
-  border-radius:10px;
-}
-.input-wrap.active::before{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  border-radius:10px;
-  background:linear-gradient(90deg,#777,#aaa,#777);
-  background-size:300% 300%;
-  animation:move 20s linear infinite;
-  opacity:.7;
-  z-index:-1;
+  border-radius:var(--radius);
+  padding:12px;
+  margin-bottom:12px;
+  transition:.3s;
 }
 
 input{
   width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:var(--bg);
+  background:transparent;
+  border:none;
+  outline:none;
   color:var(--text);
+  font-size:14px;
+}
+
+input::placeholder{color:#9a9a9a}
+
+.box:focus-within{
+  border-color:#888;
+  box-shadow:0 0 0 1px rgba(255,255,255,.15);
 }
 
 button{
   width:100%;
-  margin-top:10px;
   padding:10px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:none;
+  background:transparent;
+  border:1px solid #3a3a3a;
   color:var(--text);
+  border-radius:var(--radius);
+  cursor:pointer;
+  transition:.25s;
 }
 
-/* footer */
+button:hover{
+  border-color:#aaa;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
 .footer{
   position:fixed;
-  bottom:8px;
-  right:10px;
-  font-size:12px;
-  opacity:.7;
+  bottom:12px;
+  left:12px;
+  font-size:11px;
+  color:#888;
 }
-.version{
+
+.credit{
   position:fixed;
-  bottom:8px;
-  left:10px;
-  font-size:12px;
-  opacity:.7;
+  bottom:12px;
+  right:12px;
+  font-size:11px;
+  color:#888;
 }
 </style>
 </head>
 
 <body>
-
 <div class="top-line"></div>
 
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div class="container">
+  <h1>Create / Join Group</h1>
 
-<div class="menu" id="menu">
-  <h3>Menu</h3>
-  <input id="loginName" placeholder="Enter username">
-  <button onclick="login()">Log in</button>
-  <button onclick="toggleTheme()">Dark / Light</button>
-</div>
-
-<div class="main">
   <div class="box">
-    <h3 id="welcome">Welcome</h3>
-
-    <div class="input-wrap" id="wrap">
-      <input id="groupName" placeholder="Group name"
-        onfocus="typing(true)" onblur="typing(false)">
-    </div>
-
-    <button onclick="createGroup()">Create Group</button>
-
-    <hr style="opacity:.2">
-
-    <input id="joinCode" placeholder="Enter 6-digit code">
-    <button onclick="joinGroup()">Join Group</button>
+    <input id="username" placeholder="Your name">
   </div>
+
+  <div class="box">
+    <input id="groupName" placeholder="Group name (create)">
+  </div>
+
+  <button onclick="createGroup()">Create Group</button>
+
+  <br><br>
+
+  <div class="box">
+    <input id="joinCode" placeholder="6-digit group code">
+  </div>
+
+  <button onclick="joinGroup()">Join Group</button>
 </div>
 
-<div class="footer">Status: Developing</div>
-<div class="version">Version - P.V1.7 beta</div>
+<div class="footer">Version – P.V1.7 (Developing)</div>
+<div class="credit">© Oxford</div>
 
 <script>
-const menu=document.getElementById("menu");
-const welcome=document.getElementById("welcome");
-
-function toggleMenu(){
-  menu.classList.toggle("open");
+function saveUser(name){
+  localStorage.setItem("pg_username",name);
 }
 
-function toggleTheme(){
-  document.body.classList.toggle("light");
+function getUser(){
+  return localStorage.getItem("pg_username");
 }
 
-function typing(on){
-  document.getElementById("wrap").classList.toggle("active",on);
-}
+document.getElementById("username").value = getUser() || "";
 
-function login(){
-  const name=document.getElementById("loginName").value.trim();
-  if(!name) return;
-  localStorage.setItem("user",name);
-  welcome.textContent="Welcome, "+name;
+function genCode(){
+  return Math.floor(100000 + Math.random()*900000).toString();
 }
 
 function createGroup(){
-  const group=Math.floor(100000+Math.random()*900000);
-  localStorage.setItem("host_"+group,"true");
-  location.href="group.html?group="+group;
+  const name = username.value.trim();
+  const gname = groupName.value.trim();
+  if(!name || !gname) return alert("Fill all fields");
+
+  saveUser(name);
+
+  const code = genCode();
+  const group = {
+    name:gname,
+    host:name,
+    members:[name]
+  };
+
+  localStorage.setItem("group_"+code,JSON.stringify(group));
+  location.href = "group.html?code="+code;
 }
 
 function joinGroup(){
-  const code=document.getElementById("joinCode").value.trim();
-  if(code.length!==6) return;
-  location.href="group.html?group="+code;
+  const name = username.value.trim();
+  const code = joinCode.value.trim();
+  if(!name || code.length!==6) return alert("Invalid");
+
+  saveUser(name);
+
+  const data = localStorage.getItem("group_"+code);
+  if(!data) return alert("Group not found");
+
+  const group = JSON.parse(data);
+  if(!group.members.includes(name)){
+    group.members.push(name);
+    localStorage.setItem("group_"+code,JSON.stringify(group));
+  }
+
+  location.href="group.html?code="+code;
 }
-
-/* load user */
-const saved=localStorage.getItem("user");
-if(saved) welcome.textContent="Welcome, "+saved;
 </script>
-
 </body>
 </html>
