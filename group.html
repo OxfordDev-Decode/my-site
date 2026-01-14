@@ -3,40 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Public Group</title>
+<title>Group</title>
 
 <style>
-:root {
+:root{
   --bg:#141414;
   --box:#1e1e1e;
-  --text:#e5e5e5;
+  --text:#e6e6e6;
   --border:#2b2b2b;
 }
 
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
+*{
+  box-sizing:border-box;
   font-family:system-ui,sans-serif;
 }
 
-.top-line {
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* top line */
+.top-line{
   height:3px;
-  background:linear-gradient(90deg,#aaa,#fff,#888,#ccc,#aaa);
-  background-size:400% 400%;
-  animation:move 12s linear infinite;
+  background:linear-gradient(90deg,#777,#aaa,#777);
+  background-size:300% 300%;
+  animation:move 18s linear infinite;
 }
-
-@keyframes move {
+@keyframes move{
   0%{background-position:0%}
-  100%{background-position:400%}
+  100%{background-position:300%}
 }
 
-.main {
+.main{
   padding:60px 15px;
 }
 
-.box {
+.box{
   max-width:420px;
   margin:auto;
   background:var(--box);
@@ -45,56 +49,37 @@ body {
   padding:15px;
 }
 
-.quote-box,
-.members-box {
-  margin-top:12px;
+.members{
+  margin-top:10px;
   padding:10px;
   border-radius:10px;
   border:1px solid var(--border);
   background:var(--bg);
 }
 
-.line {
-  height:2px;
-  background:linear-gradient(90deg,#aaa,#fff,#aaa);
-  background-size:300% 300%;
-  animation:move 15s linear infinite;
-  margin:10px 0;
+.member{
+  font-size:14px;
+  margin:4px 0;
 }
 
-input {
+button{
   width:100%;
+  margin-top:10px;
   padding:10px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:var(--bg);
-  color:var(--text);
-}
-
-button {
-  width:100%;
-  padding:10px;
-  margin-top:8px;
   border-radius:10px;
   border:1px solid var(--border);
   background:none;
   color:var(--text);
 }
 
-.member {
-  font-size:14px;
-  padding:4px 0;
-}
-
-.footer {
+.footer{
   position:fixed;
   bottom:8px;
   right:10px;
   font-size:12px;
   opacity:.7;
 }
-
-.version {
+.version{
   position:fixed;
   bottom:8px;
   left:10px;
@@ -110,66 +95,48 @@ button {
 
 <div class="main">
   <div class="box">
-    <h3 id="groupTitle">Public Group</h3>
+    <h3 id="groupTitle">Group</h3>
 
-    <div class="quote-box">
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
-    </div>
+    <div class="members" id="members"></div>
 
-    <input id="nameInput" placeholder="Enter your name">
-    <button onclick="join()">Join Group</button>
-
-    <div class="members-box">
-      <h4>Members</h4>
-      <div id="members"></div>
-    </div>
-
-    <button onclick="copyLink()">Copy group link</button>
+    <button onclick="leaveGroup()">Leave Group</button>
   </div>
 </div>
 
-<div class="footer">Credit: Oxford</div>
+<div class="footer">Status: Developing</div>
 <div class="version">Version - P.V1.7 beta</div>
 
 <script>
-const params = new URLSearchParams(location.search);
-const groupId = params.get("group") || "default";
-const key = "group_" + groupId;
-const membersBox = document.getElementById("members");
-const groupTitle = document.getElementById("groupTitle");
+const params=new URLSearchParams(location.search);
+const groupId=params.get("group");
+const key="group_"+groupId;
+const membersBox=document.getElementById("members");
+const title=document.getElementById("groupTitle");
 
-groupTitle.textContent = "Group: " + groupId;
+title.textContent="Group Code: "+groupId;
 
-function load() {
-  membersBox.innerHTML = "";
-  const members = JSON.parse(localStorage.getItem(key) || "[]");
+const username=localStorage.getItem("user")||"Guest";
+
+function load(){
+  let members=JSON.parse(localStorage.getItem(key)||"[]");
+  if(!members.includes(username)){
+    members.push(username);
+    localStorage.setItem(key,JSON.stringify(members));
+  }
+  membersBox.innerHTML="";
   members.forEach(name=>{
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="member";
-    div.textContent="︳ " + name;
+    div.textContent="▏ "+name;
     membersBox.appendChild(div);
   });
 }
 
-function join() {
-  const input = document.getElementById("nameInput");
-  const name = input.value.trim();
-  if(!name) return;
-
-  const members = JSON.parse(localStorage.getItem(key) || "[]");
-  if(!members.includes(name)) {
-    members.push(name);
-    localStorage.setItem(key, JSON.stringify(members));
-  }
-  input.value="";
-  load();
-}
-
-function copyLink() {
-  navigator.clipboard.writeText(location.href);
-  alert("Group link copied");
+function leaveGroup(){
+  let members=JSON.parse(localStorage.getItem(key)||"[]");
+  members=members.filter(n=>n!==username);
+  localStorage.setItem(key,JSON.stringify(members));
+  location.href="index.html";
 }
 
 load();
