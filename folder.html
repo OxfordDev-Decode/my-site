@@ -2,116 +2,156 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Note</title>
+<title>Folder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body {
-  margin: 0;
+:root{
+  --bg:#121212;
+  --panel:#1e1e1e;
+  --border:#444;
+  --text:#e6e6e6;
+  --line:#888;
+}
+
+body{
+  margin:0;
   font-family: system-ui, sans-serif;
-  background: #111;
-  color: #ddd;
-  padding: 16px;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* MARKDOWN TEXT */
-.md {
-  cursor: pointer;
-  display: inline-block;
+header{
+  padding:14px;
+  border-bottom:1px solid var(--border);
 }
 
-/* POPUP */
-#popup {
-  position: absolute;
-  background: #1a1a1a;
-  border: 1px solid #444;
-  padding: 8px;
-  font-size: 13px;
-  display: none;
-  cursor: move;
+#note{
+  padding:16px;
+  min-height:60vh;
 }
 
-#popupClose {
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  cursor: pointer;
+.line{
+  border-left:2px solid var(--line);
+  padding-left:10px;
+  margin:8px 0;
 }
 
-/* LINE */
-#line {
-  position: absolute;
-  height: 1px;
-  background: #555;
-  display: none;
+/* markdown popup */
+.md-popup{
+  position:fixed;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px;
+  width:200px;
+  z-index:10;
 }
+
+.md-popup textarea{
+  width:100%;
+  height:70px;
+  background:#111;
+  color:var(--text);
+  border:none;
+  resize:none;
+}
+
+.md-line{
+  position:fixed;
+  height:1px;
+  background:var(--line);
+  z-index:9;
+}
+
+/* table */
+.md-table{ border-left:2px solid var(--line); margin:8px 0; }
+.md-row{ display:flex; }
+.md-cell{
+  min-width:100px;
+  padding:6px;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.md-cell:focus{ outline:none; background:rgba(255,255,255,.06); }
 </style>
 </head>
+
 <body>
 
-<div id="note">
-  <div class="md" data-raw="**Bold Text**"><b>Bold Text</b></div><br><br>
-  <div class="md" data-raw="*Italic Text*"><i>Italic Text</i></div>
-</div>
+<header>
+  <button onclick="history.back()">← Back</button>
+</header>
 
-<div id="popup">
-  <div id="popupClose" onclick="closePopup()">✕</div>
-  <pre id="popupText"></pre>
-</div>
-
-<div id="line"></div>
+<div id="note" contenteditable="true" spellcheck="false"></div>
 
 <script>
-let popup = document.getElementById('popup');
-let line = document.getElementById('line');
-let drag = false, ox = 0, oy = 0;
+const note=document.getElementById("note");
+const id=new URLSearchParams(location.search).get("id");
+const key="note_"+id;
+note.innerHTML=localStorage.getItem(key)||"";
 
-document.querySelectorAll('.md').forEach(el => {
-  el.onclick = e => {
-    popup.style.display = 'block';
-    popup.style.left = e.pageX + 20 + 'px';
-    popup.style.top = e.pageY + 'px';
-    document.getElementById('popupText').textContent = el.dataset.raw;
-
-    drawLine(el, popup);
-  };
+note.addEventListener("input",()=>{
+  localStorage.setItem(key,note.innerHTML);
+  enhance();
 });
 
-function closePopup() {
-  popup.style.display = 'none';
-  line.style.display = 'none';
+function enhance(){
+  // |=| table
+  note.querySelectorAll("div").forEach(d=>{
+    if(d.textContent.trim()==="|=|"){
+      d.replaceWith(createTable());
+    }
+  });
+
+  // markdown popup
+  note.querySelectorAll("span[data-md]").forEach(s=>{
+    s.onclick=()=>openPopup(s);
+  });
 }
 
-popup.onmousedown = e => {
-  drag = true;
-  ox = e.offsetX;
-  oy = e.offsetY;
-};
-
-document.onmousemove = e => {
-  if (!drag) return;
-  popup.style.left = e.pageX - ox + 'px';
-  popup.style.top = e.pageY - oy + 'px';
-  updateLine();
-};
-
-document.onmouseup = () => drag = false;
-
-let sourceEl = null;
-
-function drawLine(src, pop) {
-  sourceEl = src;
-  updateLine();
-  line.style.display = 'block';
+function createTable(){
+  const t=document.createElement("div");
+  t.className="md-table";
+  for(let r=0;r<2;r++){
+    const row=document.createElement("div");
+    row.className="md-row";
+    for(let c=0;c<2;c++){
+      const cell=document.createElement("div");
+      cell.className="md-cell";
+      cell.contentEditable=true;
+      row.appendChild(cell);
+    }
+    t.appendChild(row);
+  }
+  return t;
 }
 
-function updateLine() {
-  if (!sourceEl) return;
-  let a = sourceEl.getBoundingClientRect();
-  let b = popup.getBoundingClientRect();
+let popup,line;
 
-  line.style.left = a.right + 'px';
-  line.style.top = a.top + a.height / 2 + 'px';
-  line.style.width = (b.left - a.right) + 'px';
+function openPopup(target){
+  closePopup();
+  popup=document.createElement("div");
+  popup.className="md-popup";
+  popup.innerHTML=`<textarea>${target.dataset.md}</textarea>`;
+  line=document.createElement("div");
+  line.className="md-line";
+  document.body.append(popup,line);
+
+  const r=target.getBoundingClientRect();
+  popup.style.left=r.right+10+"px";
+  popup.style.top=r.top+"px";
+  line.style.left=r.right+"px";
+  line.style.top=r.top+r.height/2+"px";
+  line.style.width="10px";
 }
+
+function closePopup(){
+  if(popup) popup.remove();
+  if(line) line.remove();
+}
+
+enhance();
 </script>
 
 </body>
