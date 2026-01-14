@@ -1,102 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Public Group</title>
+<title>Index</title>
 
 <style>
+/* ===== THEME VARIABLES ===== */
+:root{
+  --bg:#1b1b1b;
+  --box:#222;
+  --text:#e5e5e5;
+  --border:#444;
+}
+
+body.light{
+  --bg:#f4f4f4;
+  --box:#ffffff;
+  --text:#111;
+  --border:#ccc;
+}
+
+/* ===== BASE ===== */
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#0e0e12;
-  color:#eaeaea;
+  background:var(--bg);
+  color:var(--text);
+  font-family:sans-serif;
+  transition:0.3s;
 }
 
-.topline{
-  height:3px;
-  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,purple,red);
-  background-size:800% 100%;
-  animation: flow 6s linear infinite;
+/* ===== MENU BUTTON ===== */
+.menu-btn{
+  position:fixed;
+  top:14px;
+  left:14px;
+  font-size:22px;
+  cursor:pointer;
+  z-index:1001;
 }
 
-@keyframes flow{
-  from{background-position:0%}
-  to{background-position:800%}
+/* ===== SLIDE MENU ===== */
+.menu{
+  position:fixed;
+  top:0;
+  left:-35%;
+  width:35%;
+  height:100%;
+  background:var(--box);
+  padding:20px;
+  border-right:1px solid var(--border);
+  transition:0.35s ease;
+  z-index:1000;
 }
 
-.center{
-  height:calc(100vh - 3px);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+.menu.open{
+  left:0;
 }
 
-.frame{
-  padding:2px;
-  border-radius:10px;
-  background:#1a1a22;
+.menu h3{
+  margin-top:0;
 }
 
-.frame:focus-within{
-  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,purple,red);
-  background-size:1000% 100%;
-  animation: rainbow 6s linear infinite;
-}
-
-.frame input{
-  padding:10px 14px;
-  border-radius:8px;
-  border:none;
-  outline:none;
-  background:#1a1a22;
-  color:#eee;
-  font-size:13px;
+/* ===== INPUT + BUTTON ===== */
+input, button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:6px;
 }
 
 button{
-  margin-top:14px;
-  padding:10px 18px;
-  border-radius:8px;
-  border:none;
-  background:#1a1a22;
-  color:white;
-  font-size:13px;
+  cursor:pointer;
 }
 
+/* ===== GRADIENT EFFECT ===== */
+@keyframes slowRainbow {
+  0%{background-position:0%}
+  100%{background-position:600%}
+}
+
+.input-wrap{
+  padding:2px;
+  border-radius:7px;
+  background:transparent;
+}
+
+.input-wrap.active{
+  background:linear-gradient(
+    90deg,
+    red,orange,yellow,green,cyan,blue,purple,red
+  );
+  background-size:600% 100%;
+  animation:slowRainbow 25s linear infinite;
+}
+
+.input-wrap input{
+  background:var(--box);
+  border:none;
+  outline:none;
+  border-radius:5px;
+}
+
+/* ===== MAIN ===== */
+.main{
+  padding:60px 20px;
+}
+
+.box{
+  background:var(--box);
+  padding:15px;
+  border-radius:8px;
+  max-width:320px;
+}
+
+/* ===== VERSION ===== */
 .version{
   position:fixed;
   bottom:10px;
   left:10px;
+  opacity:0.6;
   font-size:12px;
-  opacity:.6;
-}
-
-@keyframes rainbow{
-  from{background-position:0%}
-  to{background-position:1000%}
 }
 </style>
 </head>
 
 <body>
-<div class="topline"></div>
 
-<div class="center">
-  <div class="frame">
-    <input id="group" placeholder="Group name">
+<!-- MENU BUTTON -->
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<!-- SLIDE MENU -->
+<div class="menu" id="menu">
+  <h3>Menu</h3>
+
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <div class="input-wrap" id="inputWrap">
+      <input id="usernameInput" placeholder="Enter your name">
+    </div>
+    <button onclick="login()">Log in</button>
   </div>
-  <button onclick="openGroup()">Create / Open</button>
+
+  <!-- SETTINGS -->
+  <h4>Settings</h4>
+  <button onclick="setTheme('dark')">Dark theme</button>
+  <button onclick="setTheme('light')">Light theme</button>
+
+  <!-- LOGOUT -->
+  <button onclick="logout()">Log out</button>
 </div>
 
-<div class="version">Version - P.V1.6 beta</div>
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="box">
+    <h3>Home</h3>
+    <div id="userText">Not logged in</div>
+  </div>
+</div>
+
+<!-- VERSION -->
+<div class="version">Version – P.V1.7 beta</div>
 
 <script>
-function openGroup(){
-  const g = document.getElementById("group").value.trim();
-  if(!g) return;
-  location.href = "group.html?g=" + encodeURIComponent(g);
+const menu = document.getElementById("menu");
+const userText = document.getElementById("userText");
+const loginBox = document.getElementById("loginBox");
+const input = document.getElementById("usernameInput");
+const wrap = document.getElementById("inputWrap");
+
+/* MENU */
+function toggleMenu(){
+  menu.classList.toggle("open");
 }
+
+/* LOGIN */
+function login(){
+  const name = input.value.trim();
+  if(!name) return alert("Enter your name");
+  localStorage.setItem("username", name);
+  updateUser();
+}
+
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("username");
+  updateUser();
+}
+
+/* USER STATE */
+function updateUser(){
+  const user = localStorage.getItem("username");
+  if(user){
+    userText.innerText = "Logged in as: " + user;
+    loginBox.style.display = "none";
+  }else{
+    userText.innerText = "Not logged in";
+    loginBox.style.display = "block";
+  }
+}
+
+/* THEME */
+function setTheme(t){
+  document.body.classList.toggle("light", t==="light");
+  localStorage.setItem("theme", t);
+}
+
+/* INPUT GRADIENT ONLY WHEN TYPING */
+input.addEventListener("focus", ()=>wrap.classList.add("active"));
+input.addEventListener("blur", ()=>wrap.classList.remove("active"));
+
+/* LOAD SAVED STATE */
+(function(){
+  if(localStorage.getItem("theme")==="light"){
+    document.body.classList.add("light");
+  }
+  updateUser();
+})();
 </script>
+
 </body>
 </html>
