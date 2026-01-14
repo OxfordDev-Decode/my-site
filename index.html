@@ -8,66 +8,90 @@
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background:#0b0b0f;
+  background:#0e0e12;
   color:#eaeaea;
 }
+
+.topline{
+  height:4px;
+  background:linear-gradient(
+    90deg,
+    red,orange,yellow,green,cyan,blue,purple,red
+  );
+  background-size:800% 100%;
+  animation: flow 2s linear infinite;
+}
+
+@keyframes flow{
+  from{background-position:0%}
+  to{background-position:800%}
+}
+
 .center{
-  height:100vh;
+  height:calc(100vh - 4px);
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
 }
-.neon{
+
+.frame{
   padding:3px;
   border-radius:16px;
-  background:linear-gradient(90deg,#aaa,#fff,#aaa);
-  background-size:200%;
-  animation:move 3s linear infinite;
+  background:linear-gradient(
+    90deg,
+    red,orange,yellow,green,cyan,blue,purple,red
+  );
+  background-size:800% 100%;
+  animation: flow 2s linear infinite;
 }
-.neon input{
-  padding:10px;
+
+.frame input{
+  padding:10px 14px;
   border-radius:14px;
   border:none;
   outline:none;
+  background:#1a1a22;
+  color:#eee;
   font-size:13px;
 }
-@keyframes move{
-  from{background-position:0%}
-  to{background-position:200%}
-}
+
 button{
-  margin-top:12px;
-  padding:10px 16px;
+  margin-top:14px;
+  padding:10px 18px;
   border-radius:14px;
   border:none;
-  background:#1e1e2a;
+  background:#1a1a22;
   color:white;
+  font-size:13px;
 }
+
 .version{
   position:fixed;
   bottom:10px;
   left:10px;
   font-size:12px;
-  opacity:0.6;
+  opacity:.6;
 }
 </style>
 </head>
 
 <body>
+<div class="topline"></div>
+
 <div class="center">
-  <div class="neon">
+  <div class="frame">
     <input id="group" placeholder="Group name">
   </div>
-  <button onclick="go()">Create / Open</button>
+  <button onclick="openGroup()">Create / Open</button>
 </div>
 
 <div class="version">Version - P.V1.6 beta</div>
 
 <script>
-function go(){
+function openGroup(){
   const g=document.getElementById("group").value.trim();
-  if(!g)return;
+  if(!g) return;
   location.href="group.html?g="+encodeURIComponent(g);
 }
 </script>
