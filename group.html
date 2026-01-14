@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Group</title>
+  <style>
+    body {
+      background: #1e1e1e;
+      color: #eaeaea;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 14px;
+      width: 300px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 10px;
+      border: none;
+    }
+    ul {
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h3>Public Group</h3>
+  <input id="name" placeholder="Your name">
+  <button onclick="join()">Join Group</button>
+  <ul id="list"></ul>
+</div>
+
+<script>
+const groupId = location.hash.substring(1);
+const key = "group_" + groupId;
+
+function load() {
+  const data = JSON.parse(localStorage.getItem(key) || "[]");
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  data.forEach(n => {
+    const li = document.createElement("li");
+    li.textContent = n;
+    list.appendChild(li);
+  });
+}
+
+function join() {
+  const name = document.getElementById("name").value.trim();
+  if (!name) return;
+
+  const data = JSON.parse(localStorage.getItem(key) || "[]");
+  if (!data.includes(name)) {
+    data.push(name);
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  document.getElementById("name").value = "";
+  load();
+}
+
+load();
+</script>
+
+</body>
+    </html>
