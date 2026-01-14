@@ -1,75 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Group</title>
-  <style>
-    body {
-      background: #1e1e1e;
-      color: #eaeaea;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .box {
-      background: #2a2a2a;
-      padding: 20px;
-      border-radius: 14px;
-      width: 300px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 10px;
-      border: none;
-    }
-    ul {
-      margin-top: 12px;
-    }
-  </style>
-</head>
-<body>
+<meta charset="UTF-8">
+<title>Group</title>
 
-<div class="box">
-  <h3>Public Group</h3>
-  <input id="name" placeholder="Your name">
-  <button onclick="join()">Join Group</button>
-  <ul id="list"></ul>
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0b0b0f;
+  color:#eaeaea;
+}
+.top{
+  height:4px;
+  background:linear-gradient(90deg,#aaa,#fff,#aaa);
+  background-size:200%;
+  animation:move 3s linear infinite;
+}
+@keyframes move{
+  from{background-position:0%}
+  to{background-position:200%}
+}
+.container{
+  padding:30px;
+}
+.neon{
+  padding:3px;
+  border-radius:16px;
+  background:linear-gradient(90deg,#aaa,#fff,#aaa);
+  background-size:200%;
+  animation:move 3s linear infinite;
+}
+.neon input{
+  padding:10px;
+  border-radius:14px;
+  border:none;
+  outline:none;
+  font-size:13px;
+}
+button{
+  margin-top:12px;
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  background:#1e1e2a;
+  color:white;
+}
+.box{
+  margin-top:15px;
+  padding:12px;
+  border-radius:14px;
+  background:#12121a;
+}
+.version{
+  position:fixed;
+  bottom:10px;
+  left:10px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+<div class="top"></div>
+
+<div class="container">
+  <div class="neon">
+    <input id="name" placeholder="Enter your name">
+  </div>
+
+  <button onclick="join()">Join</button>
+
+  <div class="box">
+    >
+    <br>>
+    <br>>
+  </div>
+
+  <div class="box">
+    <b>Members</b>
+    <ul id="list"></ul>
+  </div>
+
+  <button onclick="copy()">Copy group link</button>
 </div>
 
+<div class="version">Version - P.V1.6 beta</div>
+
 <script>
-const groupId = location.hash.substring(1);
-const key = "group_" + groupId;
-
-function load() {
-  const data = JSON.parse(localStorage.getItem(key) || "[]");
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-  data.forEach(n => {
-    const li = document.createElement("li");
-    li.textContent = n;
-    list.appendChild(li);
-  });
+function join(){
+  const n=document.getElementById("name").value.trim();
+  if(!n)return;
+  const li=document.createElement("li");
+  li.textContent=n;
+  document.getElementById("list").appendChild(li);
+  document.getElementById("name").value="";
 }
-
-function join() {
-  const name = document.getElementById("name").value.trim();
-  if (!name) return;
-
-  const data = JSON.parse(localStorage.getItem(key) || "[]");
-  if (!data.includes(name)) {
-    data.push(name);
-    localStorage.setItem(key, JSON.stringify(data));
-  }
-  document.getElementById("name").value = "";
-  load();
+function copy(){
+  navigator.clipboard.writeText(location.href);
+  alert("Link copied");
 }
-
-load();
 </script>
-
 </body>
-    </html>
+</html>
