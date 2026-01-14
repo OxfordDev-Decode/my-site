@@ -2,93 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notes – Home</title>
-
+<title>Folders</title>
 <style>
-:root{
-  --bg:#0f1115;
-  --panel:#161922;
-  --panel2:#1c2030;
-  --text:#eaeaf0;
-  --muted:#8b90a7;
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #111;
+  color: #ddd;
 }
-body{
-  margin:0;
-  font-family:system-ui,Segoe UI,Roboto,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+
+/* MENU */
+#menu {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: #1a1a1a;
+  transition: bottom 0.3s;
+  padding: 12px;
 }
-.menu{
-  position:fixed;
-  left:0; top:0;
-  width:220px;
-  height:100%;
-  background:var(--panel);
-  padding:12px;
+
+#menu.open {
+  bottom: 0;
 }
-.menu h3{
-  margin:0 0 10px;
-  font-size:13px;
-  color:var(--muted);
+
+#menuClose {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 14px;
+  cursor: pointer;
 }
-.menu button{
-  width:100%;
-  margin-bottom:8px;
-  padding:8px;
-  font-size:12.5px;
-  border:none;
-  border-radius:8px;
-  background:var(--panel2);
-  color:var(--text);
+
+#menu p {
+  font-size: 13px;
 }
-.main{
-  margin-left:220px;
-  padding:20px;
+
+/* HEADER */
+header {
+  padding: 12px;
+  border-bottom: 1px solid #333;
 }
-.folder{
-  background:var(--panel2);
-  padding:14px;
-  border-radius:10px;
-  margin-bottom:10px;
-  cursor:pointer;
+
+button {
+  background: none;
+  border: 1px solid #444;
+  color: #ddd;
+  padding: 6px 10px;
+  cursor: pointer;
 }
-.folder:hover{
-  background:#ffffff10;
+
+/* FOLDER LIST */
+.folder {
+  padding: 14px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+}
+
+.folder:hover {
+  background: #1e1e1e;
+}
+
+.folder:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.folder:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 </style>
 </head>
-
 <body>
-<div class="menu">
-  <h3>MENU</h3>
-  <button onclick="createFolder()">＋ Create Folder</button>
+
+<header>
+  <button onclick="openMenu()">Menu</button>
+</header>
+
+<div class="folder" onclick="openFolder('note1')">This is folder 1</div>
+<div class="folder" onclick="openFolder('note2')">Another folder</div>
+
+<div id="menu">
+  <div id="menuClose" onclick="closeMenu()">✕</div>
+  <p>User: Logged in</p>
+  <p>Theme: Dark / Light</p>
 </div>
 
-<div class="main" id="folders"></div>
-
 <script>
-const foldersEl=document.getElementById("folders");
-let folders=JSON.parse(localStorage.getItem("folders")||"[]");
-
-function render(){
-  foldersEl.innerHTML="";
-  folders.forEach((f,i)=>{
-    const d=document.createElement("div");
-    d.className="folder";
-    d.textContent=f.name;
-    d.onclick=()=>location.href="folder.html#"+i;
-    foldersEl.appendChild(d);
-  });
+function openMenu() {
+  document.getElementById('menu').classList.add('open');
 }
-function createFolder(){
-  const name=prompt("Folder name");
-  if(!name)return;
-  folders.push({name,content:"# "+name+"\n"});
-  localStorage.setItem("folders",JSON.stringify(folders));
-  render();
+function closeMenu() {
+  document.getElementById('menu').classList.remove('open');
 }
-render();
+function openFolder(id) {
+  window.location.href = "folder.html#" + id;
+}
 </script>
+
 </body>
 </html>
