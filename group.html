@@ -1,168 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Group</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Group</title>
 
 <style>
-body{
+:root {
+  --bg:#141414;
+  --box:#1e1e1e;
+  --text:#e5e5e5;
+  --border:#2b2b2b;
+}
+
+body {
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#0e0e12;
-  color:#eaeaea;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,sans-serif;
 }
 
-.topline{
+.top-line {
   height:3px;
-  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,purple,red);
-  background-size:800% 100%;
-  animation: flow 6s linear infinite;
+  background:linear-gradient(90deg,#aaa,#fff,#888,#ccc,#aaa);
+  background-size:400% 400%;
+  animation:move 12s linear infinite;
 }
 
-@keyframes flow{
-  from{background-position:0%}
-  to{background-position:800%}
+@keyframes move {
+  0%{background-position:0%}
+  100%{background-position:400%}
 }
 
-.container{
-  padding:30px;
+.main {
+  padding:60px 15px;
 }
 
-.frame{
-  padding:2px;
+.box {
+  max-width:420px;
+  margin:auto;
+  background:var(--box);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:15px;
+}
+
+.quote-box,
+.members-box {
+  margin-top:12px;
+  padding:10px;
   border-radius:10px;
-  background:#1a1a22;
+  border:1px solid var(--border);
+  background:var(--bg);
 }
 
-.frame.active{
-  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,purple,red);
-  background-size:1000% 100%;
-  animation: rainbow 6s linear infinite;
-}
-
-.frame input{
-  padding:10px 14px;
-  border-radius:8px;
-  border:none;
-  outline:none;
-  background:#1a1a22;
-  color:#eee;
-  font-size:13px;
-}
-
-button{
-  margin-top:14px;
-  padding:10px 18px;
-  border-radius:8px;
-  border:none;
-  background:#1a1a22;
-  color:white;
-  font-size:13px;
-}
-
-button.active{
-  outline:2px solid #aaa;
-}
-
-.box{
-  margin-top:18px;
-  padding:14px;
-  border-radius:10px;
-  background:#14141c;
-}
-
-.line{
-  height:4px;
+.line {
+  height:2px;
+  background:linear-gradient(90deg,#aaa,#fff,#aaa);
+  background-size:300% 300%;
+  animation:move 15s linear infinite;
   margin:10px 0;
-  border-radius:4px;
-  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,purple,red);
-  background-size:1000% 100%;
-  animation: rainbow 6s linear infinite;
 }
 
-ul{
-  padding-left:18px;
+input {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  color:var(--text);
 }
 
-.version{
+button {
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:none;
+  color:var(--text);
+}
+
+.member {
+  font-size:14px;
+  padding:4px 0;
+}
+
+.footer {
   position:fixed;
-  bottom:10px;
+  bottom:8px;
+  right:10px;
+  font-size:12px;
+  opacity:.7;
+}
+
+.version {
+  position:fixed;
+  bottom:8px;
   left:10px;
   font-size:12px;
-  opacity:.6;
-}
-
-@keyframes rainbow{
-  from{background-position:0%}
-  to{background-position:1000%}
+  opacity:.7;
 }
 </style>
 </head>
 
 <body>
-<div class="topline"></div>
 
-<div class="container">
+<div class="top-line"></div>
 
-  <div class="frame" id="frame">
-    <input id="name" placeholder="Enter your name">
-  </div>
-
-  <button id="joinBtn" onclick="join()">Join group</button>
-
+<div class="main">
   <div class="box">
-    <div class="line"></div>
-    <div class="line"></div>
-    <div class="line"></div>
-  </div>
+    <h3 id="groupTitle">Public Group</h3>
 
-  <div class="box">
-    <b>Members</b>
-    <ul id="members"></ul>
-  </div>
+    <div class="quote-box">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
 
-  <button onclick="copy()">Copy group link</button>
+    <input id="nameInput" placeholder="Enter your name">
+    <button onclick="join()">Join Group</button>
+
+    <div class="members-box">
+      <h4>Members</h4>
+      <div id="members"></div>
+    </div>
+
+    <button onclick="copyLink()">Copy group link</button>
+  </div>
 </div>
 
-<div class="version">Version - P.V1.6 beta</div>
+<div class="footer">Credit: Oxford</div>
+<div class="version">Version - P.V1.7 beta</div>
 
 <script>
-const input = document.getElementById("name");
-const frame = document.getElementById("frame");
-const joinBtn = document.getElementById("joinBtn");
-const members = document.getElementById("members");
+const params = new URLSearchParams(location.search);
+const groupId = params.get("group") || "default";
+const key = "group_" + groupId;
+const membersBox = document.getElementById("members");
+const groupTitle = document.getElementById("groupTitle");
 
-input.addEventListener("input", ()=>{
-  frame.classList.add("active");
-});
+groupTitle.textContent = "Group: " + groupId;
 
-input.addEventListener("blur", ()=>{
-  if(!input.value) frame.classList.remove("active");
-});
-
-function join(){
-  const n = input.value.trim();
-  if(!n) return;
-
-  const li = document.createElement("li");
-  li.textContent = n;
-  members.appendChild(li);
-
-  input.value = "";
-  frame.classList.remove("active");
+function load() {
+  membersBox.innerHTML = "";
+  const members = JSON.parse(localStorage.getItem(key) || "[]");
+  members.forEach(name=>{
+    const div = document.createElement("div");
+    div.className="member";
+    div.textContent="︳ " + name;
+    membersBox.appendChild(div);
+  });
 }
 
-joinBtn.addEventListener("mousedown", ()=>{
-  joinBtn.classList.add("active");
-});
-joinBtn.addEventListener("mouseup", ()=>{
-  joinBtn.classList.remove("active");
-});
+function join() {
+  const input = document.getElementById("nameInput");
+  const name = input.value.trim();
+  if(!name) return;
 
-function copy(){
+  const members = JSON.parse(localStorage.getItem(key) || "[]");
+  if(!members.includes(name)) {
+    members.push(name);
+    localStorage.setItem(key, JSON.stringify(members));
+  }
+  input.value="";
+  load();
+}
+
+function copyLink() {
   navigator.clipboard.writeText(location.href);
   alert("Group link copied");
 }
+
+load();
 </script>
+
 </body>
 </html>
