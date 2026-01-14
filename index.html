@@ -2,128 +2,93 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Notes – Home</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 :root{
-  --bg:#121212;
-  --panel:#1e1e1e;
-  --border:#444;
-  --text:#e6e6e6;
+  --bg:#0f1115;
+  --panel:#161922;
+  --panel2:#1c2030;
+  --text:#eaeaf0;
+  --muted:#8b90a7;
 }
-
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+  font-family:system-ui,Segoe UI,Roboto,sans-serif;
   background:var(--bg);
   color:var(--text);
 }
-
-header{
-  padding:14px;
-  border-bottom:1px solid var(--border);
-}
-
-button{
-  background:#2a2a2a;
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-main{
-  padding:16px;
-}
-
-.folder{
-  padding:10px 14px;
-  border-left:3px solid #888;
-  margin-bottom:8px;
-  cursor:pointer;
-}
-
-.folder:hover{
-  background:rgba(255,255,255,0.05);
-}
-
-#popup{
+.menu{
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-
-#popupBox{
+  left:0; top:0;
+  width:220px;
+  height:100%;
   background:var(--panel);
-  padding:16px;
-  border-radius:8px;
-  width:260px;
+  padding:12px;
 }
-
-input{
+.menu h3{
+  margin:0 0 10px;
+  font-size:13px;
+  color:var(--muted);
+}
+.menu button{
   width:100%;
+  margin-bottom:8px;
   padding:8px;
-  margin-top:8px;
-  background:#111;
+  font-size:12.5px;
+  border:none;
+  border-radius:8px;
+  background:var(--panel2);
   color:var(--text);
-  border:1px solid var(--border);
-  border-radius:6px;
+}
+.main{
+  margin-left:220px;
+  padding:20px;
+}
+.folder{
+  background:var(--panel2);
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+.folder:hover{
+  background:#ffffff10;
 }
 </style>
 </head>
 
 <body>
-
-<header>
-  <button onclick="openPopup()">＋ Create Folder</button>
-</header>
-
-<main id="folders"></main>
-
-<div id="popup">
-  <div id="popupBox">
-    <div>Create folder</div>
-    <input id="fname" placeholder="Folder name">
-    <div style="margin-top:10px;text-align:right">
-      <button onclick="closePopup()">Cancel</button>
-      <button onclick="createFolder()">Create</button>
-    </div>
-  </div>
+<div class="menu">
+  <h3>MENU</h3>
+  <button onclick="createFolder()">＋ Create Folder</button>
 </div>
 
+<div class="main" id="folders"></div>
+
 <script>
-const foldersEl = document.getElementById("folders");
-let folders = JSON.parse(localStorage.getItem("folders")||"[]");
+const foldersEl=document.getElementById("folders");
+let folders=JSON.parse(localStorage.getItem("folders")||"[]");
 
 function render(){
   foldersEl.innerHTML="";
   folders.forEach((f,i)=>{
     const d=document.createElement("div");
     d.className="folder";
-    d.textContent=f;
-    d.onclick=()=>location.href=`folder.html?id=${i}`;
+    d.textContent=f.name;
+    d.onclick=()=>location.href="folder.html#"+i;
     foldersEl.appendChild(d);
   });
 }
-render();
-
-function openPopup(){ popup.style.display="flex"; }
-function closePopup(){ popup.style.display="none"; }
-
 function createFolder(){
-  const v=fname.value.trim();
-  if(!v) return;
-  folders.push(v);
+  const name=prompt("Folder name");
+  if(!name)return;
+  folders.push({name,content:"# "+name+"\n"});
   localStorage.setItem("folders",JSON.stringify(folders));
-  closePopup();
   render();
 }
+render();
 </script>
-
 </body>
 </html>
