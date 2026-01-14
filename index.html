@@ -1,50 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Public Groups</title>
-  <style>
-    body {
-      background: #1e1e1e;
-      color: #eaeaea;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .box {
-      background: #2a2a2a;
-      padding: 20px;
-      border-radius: 14px;
-      text-align: center;
-    }
-    button {
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: none;
-      background: #444;
-      color: #eee;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
+<meta charset="UTF-8">
+<title>Public Group</title>
 
-<div class="box">
-  <h2>Create Public Group</h2>
-  <button onclick="createGroup()">Create Group</button>
-  <p id="link"></p>
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0b0b0f;
+  color:#eaeaea;
+}
+.center{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+.neon{
+  padding:3px;
+  border-radius:16px;
+  background:linear-gradient(90deg,#aaa,#fff,#aaa);
+  background-size:200%;
+  animation:move 3s linear infinite;
+}
+.neon input{
+  padding:10px;
+  border-radius:14px;
+  border:none;
+  outline:none;
+  font-size:13px;
+}
+@keyframes move{
+  from{background-position:0%}
+  to{background-position:200%}
+}
+button{
+  margin-top:12px;
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  background:#1e1e2a;
+  color:white;
+}
+.version{
+  position:fixed;
+  bottom:10px;
+  left:10px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+<div class="center">
+  <div class="neon">
+    <input id="group" placeholder="Group name">
+  </div>
+  <button onclick="go()">Create / Open</button>
 </div>
 
+<div class="version">Version - P.V1.6 beta</div>
+
 <script>
-function createGroup() {
-  const id = "group-" + Math.random().toString(36).substring(2, 8);
-  const url = location.origin + location.pathname.replace("index.html", "") + "group.html#" + id;
-  document.getElementById("link").innerHTML =
-    `<a href="${url}" target="_blank">${url}</a>`;
+function go(){
+  const g=document.getElementById("group").value.trim();
+  if(!g)return;
+  location.href="group.html?g="+encodeURIComponent(g);
 }
 </script>
-
 </body>
 </html>
