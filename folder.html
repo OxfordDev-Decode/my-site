@@ -2,161 +2,103 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Note</title>
+<title>Folder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #0f0f0f;
-  color: white;
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:.4s;
+}
+:root{
+  --bg:#121212;
+  --panel:#1c1c1c;
+  --text:#eee;
+  --line:#555;
+}
+.light{
+  --bg:#f5f5f5;
+  --panel:#fff;
+  --text:#111;
+  --line:#bbb;
 }
 
-header {
-  padding: 16px;
-  font-size: 16px;
-  font-weight: 600;
+.top{
+  padding:14px;
+  border-bottom:1px solid var(--line);
 }
 
-textarea {
-  width: 100%;
-  height: calc(100vh - 140px);
-  background: transparent;
-  color: white;
-  border: none;
-  padding: 16px;
-  font-size: 14px;
-  resize: none;
-  outline: none;
+.editor{
+  padding:14px;
+}
+textarea{
+  width:100%;
+  height:200px;
+  background:var(--panel);
+  color:var(--text);
+  border:none;
+  border-radius:10px;
+  padding:12px;
 }
 
-.actions {
-  display: flex;
-  gap: 10px;
-  padding: 16px;
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:var(--panel);
+  color:var(--text);
 }
 
-button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  font-size: 14px;
-}
-
-.save {
-  background: #1e1e1e;
-  color: white;
-}
-
-.discard {
-  background: transparent;
-  color: #aaa;
-  border: 1px solid #333;
-}
-
-/* Modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-box {
-  background: #161616;
-  padding: 20px;
-  border-radius: 14px;
-  width: 85%;
-}
-
-.modal-box p {
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
+.preview{
+  padding:14px;
+  border-top:1px solid var(--line);
 }
 </style>
 </head>
 
 <body>
-
-<header id="title"></header>
-
-<textarea id="note" placeholder="Write your note here..."></textarea>
-
-<div class="actions">
-  <button class="discard" onclick="attemptLeave()">Discard</button>
-  <button class="save" onclick="saveNote()">Save</button>
+<div class="top">
+  <button onclick="back()">← Back</button>
 </div>
 
-<!-- Warning Modal -->
-<div class="modal" id="modal">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <p>This note will not be saved.</p>
-    <div class="modal-actions">
-      <button class="discard" onclick="leave()">Discard</button>
-      <button class="save" onclick="saveAndLeave()">Save</button>
-    </div>
+<div class="editor">
+  <textarea id="text"></textarea>
+  <div class="buttons">
+    <button onclick="save()">Save</button>
+    <button onclick="discard()">Discard</button>
   </div>
 </div>
 
+<div class="preview" id="preview"></div>
+
 <script>
-const params = new URLSearchParams(location.search);
-const id = params.get("id");
+document.body.className=localStorage.getItem("theme")||"";
+const id=new URLSearchParams(location.search).get("id");
+let folders=JSON.parse(localStorage.getItem("folders"));
+const area=document.getElementById("text");
+area.value=folders[id].content;
+preview.innerHTML=marked.parse(area.value);
 
-let folders = JSON.parse(localStorage.getItem("folders"));
-let original = folders[id].note;
+area.oninput=()=>preview.innerHTML=marked.parse(area.value);
 
-const noteEl = document.getElementById("note");
-noteEl.value = original;
-document.getElementById("title").textContent = folders[id].name;
-
-let changed = false;
-
-noteEl.addEventListener("input", () => changed = true);
-
-function saveNote() {
-  folders[id].note = noteEl.value;
-  localStorage.setItem("folders", JSON.stringify(folders));
-  changed = false;
+function save(){
+  folders[id].content=area.value;
+  localStorage.setItem("folders",JSON.stringify(folders));
+  history.back();
 }
-
-function attemptLeave() {
-  if (changed) {
-    document.getElementById("modal").style.display = "flex";
-  } else {
-    leave();
-  }
-}
-
-function leave() {
-  location.href = "index.html";
-}
-
-function saveAndLeave() {
-  saveNote();
-  leave();
-}
-
-document.getElementById("modal").onclick = () => {
-  document.getElementById("modal").style.display = "none";
-};
-
-// Refresh / close protection
-window.addEventListener("beforeunload", (e) => {
-  if (changed) {
-    e.preventDefault();
-    e.returnValue = "";
-  }
-});
+function discard(){history.back();}
+function back(){history.back();}
 </script>
-
 </body>
 </html>
